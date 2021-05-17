@@ -1,4 +1,5 @@
 ﻿using MWInterfaces;
+using System.Collections.Generic;
 
 namespace MWEntities
 {
@@ -14,10 +15,14 @@ namespace MWEntities
 
         public int CloserMinesNumber { get; set; }
 
-        public int GetCloserMines()
+        public Cell GetCloserMines()
         {
             throw new System.NotImplementedException();
         }
 
-}
+        IList<Cell> IListableCloserCells.GetCloserMines()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
 }

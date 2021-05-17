@@ -23,10 +23,16 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MWPersistence\MWPersistence.csproj" />
+    <ProjectReference Include="..\MWServices\MWServices.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <EmbeddedResource Update="Resources\Strings.en-US.resx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\Strings.resx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

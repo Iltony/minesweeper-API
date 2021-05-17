@@ -3,9 +3,9 @@ using System.Linq;
 
 namespace TestProject
 {
-    internal class utils
+    internal class Utils
     {
-        public Fixture GetFixture()
+        public static Fixture GetFixture()
         {
             var fixture = new Fixture();
 

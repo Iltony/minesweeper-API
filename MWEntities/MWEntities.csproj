@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MWInterfaces\MWInterfaces.csproj" />
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

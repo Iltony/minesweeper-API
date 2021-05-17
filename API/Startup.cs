@@ -8,6 +8,9 @@ using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
 using MWPersistence;
 using Microsoft.EntityFrameworkCore;
+using MWServices;
+using System.Resources;
+using System.Reflection;
 
 namespace minesweeper_API
 {
@@ -34,6 +37,13 @@ namespace minesweeper_API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "minesweeper_API", Version = "v1" });
             });
+
+            //services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IServicesResourceManager>
+                (srm => new ServicesResourceManager(new ResourceManager("minesweeper_API.Resources.Strings", Assembly.GetExecutingAssembly())));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,6 +67,7 @@ namespace minesweeper_API
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }
