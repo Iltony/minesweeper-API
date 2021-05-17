@@ -11,11 +11,18 @@ namespace TestProject
     [TestFixture]
     public class UserRepositoryTests
     {
+        private Fixture _fixture;
+
+        [SetUp]
+        public void setup() {
+            _fixture = Utils.GetFixture();
+        }
+
         [Test]
         public async Task ExistsUserAsync_IfTheUserExists_ReturnsTrue()
         {
             var options = new DbContextOptionsBuilder<MWContext>()
-                .UseInMemoryDatabase(databaseName: "testdatabase")
+                .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
                 .Options;
 
             using (var context = new MWContext(options))
@@ -35,7 +42,7 @@ namespace TestProject
         public async Task ExistsUserAsync_IfTheUserDoesNotExists_ReturnsFalse()
         {
             var options = new DbContextOptionsBuilder<MWContext>()
-                .UseInMemoryDatabase(databaseName: "testdatabase")
+                .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
                 .Options;
 
 
@@ -56,7 +63,7 @@ namespace TestProject
         public async Task GetUserAsync_IfTheUserExists_ReturnsTheUser()
         {
             var options = new DbContextOptionsBuilder<MWContext>()
-                .UseInMemoryDatabase(databaseName: "testdatabase")
+                .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
                 .Options;
 
             using (var context = new MWContext(options))
@@ -76,7 +83,7 @@ namespace TestProject
         public async Task GetUserAsync_IfTheUserDoesExists_ReturnsNull()
         {
             var options = new DbContextOptionsBuilder<MWContext>()
-                .UseInMemoryDatabase(databaseName: "testdatabase")
+                .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
                 .Options;
 
             using (var context = new MWContext(options))
@@ -95,7 +102,7 @@ namespace TestProject
         public async Task RegisterUserAsync_MustCreateTheUserInTheContext()
         {
             var options = new DbContextOptionsBuilder<MWContext>()
-                .UseInMemoryDatabase(databaseName: "testdatabase")
+                .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
                 .Options;
 
             using (var context = new MWContext(options))
@@ -115,7 +122,7 @@ namespace TestProject
         public async Task RegisterUserAsync_MustReturnTheUser()
         {
             var options = new DbContextOptionsBuilder<MWContext>()
-                .UseInMemoryDatabase(databaseName: "testdatabase")
+                .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
                 .Options;
 
             using (var context = new MWContext(options))
@@ -127,5 +134,77 @@ namespace TestProject
             }
         }
 
+
+        [Test]
+        public async Task GetUserBoardsAsync_MustReturnTheUserBoards()
+        {
+            var options = new DbContextOptionsBuilder<MWContext>()
+                .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
+                .Options;
+
+            using (var context = new MWContext(options))
+            {
+                var repo = new UserRepository(context);
+
+                const string user1 = "user1";
+                var pb1 = _fixture.Build<PersistibleBoard>().With(b => b.Username, user1).Create();
+                var pb2 = _fixture.Build<PersistibleBoard>().With(b => b.Username, user1).Create();
+                var pb3 = _fixture.Create<PersistibleBoard>();
+                var pb4 = _fixture.Create<PersistibleBoard>();
+
+                context.PersistibleBoards.Add(pb1);
+                context.PersistibleBoards.Add(pb2);
+                context.PersistibleBoards.Add(pb3);
+                context.PersistibleBoards.Add(pb4);
+                context.SaveChanges();
+
+                var result = await repo.GetUserBoardsAsync(user1);
+                Assert.AreEqual(2, result.Count);
+            }
+        }
+
+
+
+
+        [Test]
+        public async Task GetUserBoardsAsync_WhenTheUserDoesNotHaveBoards_MustReturnEmptyList()
+        {
+            var options = new DbContextOptionsBuilder<MWContext>()
+                .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
+                .Options;
+
+            using (var context = new MWContext(options))
+            {
+                var repo = new UserRepository(context);
+
+                const string user1 = "user1";
+                var pb1 = _fixture.Create<PersistibleBoard>();
+                var pb2 = _fixture.Create<PersistibleBoard>();
+                var pb3 = _fixture.Create<PersistibleBoard>();
+                
+                context.PersistibleBoards.Add(pb1);
+                context.PersistibleBoards.Add(pb2);
+                context.PersistibleBoards.Add(pb3);
+                context.SaveChanges();
+
+                var result = await repo.GetUserBoardsAsync(user1);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(0, result.Count);
+            }
+        }
+
+        //[TearDown]
+        //public void TearDown() {
+        //    var options = new DbContextOptionsBuilder<MWContext>()
+        //        .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
+        //        .Options;
+
+        //    using (var context = new MWContext(options))
+        //    {
+        //        context.PersistibleBoards.RemoveRange(context.PersistibleBoards);
+        //        context.Users.RemoveRange(context.Users);
+        //        context.SaveChanges();
+        //    }
+        //}
     }
 }

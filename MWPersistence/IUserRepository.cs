@@ -1,4 +1,5 @@
 ﻿using MWEntities;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MWPersistence
@@ -11,6 +12,9 @@ namespace MWPersistence
 
         Task<User> RegisterUserAsync(User user);
 
-        Task<bool> ExistsUserAsync(string username);    
+        Task<bool> ExistsUserAsync(string username);
+
+        Task<IList<PersistibleBoard>> GetUserBoardsAsync(string username);
+
     }
 }

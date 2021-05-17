@@ -1,5 +1,6 @@
 ﻿using MWEntities;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MWServices
@@ -22,5 +23,13 @@ namespace MWServices
         /// <param name="birthdate">The birthdate of the user</param>
         /// <returns>It returns the created user in the database</returns>
         Task<User> RegisterUserAsync(string username, string firstName, string lastName, DateTime birthdate);
+
+
+        /// <summary>
+        /// Retrieve the list of saved boards for the user
+        /// </summary>
+        /// <param name="username">The username for lookup the user</param>
+        /// <returns>It returns the list of boards for the user</returns>
+        Task<IList<Board>> GetUserBoardsAsync(string username);
     }
 }

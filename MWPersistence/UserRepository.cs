@@ -1,4 +1,6 @@
 ﻿using MWEntities;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MWPersistence
@@ -35,6 +37,11 @@ namespace MWPersistence
         public async Task<User> GetUserAsync(string username)
         {
             return await _context.Users.FindAsync(username);
+        }
+
+        public Task<IList<PersistibleBoard>> GetUserBoardsAsync(string username)
+        {
+            return Task.Run(() => _context.PersistibleBoards.Where(pb => pb.Username == username).ToList() as IList<PersistibleBoard>);
         }
     }
 }

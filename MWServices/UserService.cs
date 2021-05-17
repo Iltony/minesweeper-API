@@ -1,4 +1,5 @@
-﻿using MWEntities;
+﻿using AutoMapper;
+using MWEntities;
 using MWPersistence;
 using System;
 using System.Collections.Generic;
@@ -13,13 +14,16 @@ namespace MWServices
     {
         private IUserRepository _userRepository;
         private IServicesResourceManager _serviceResourceManager;
+        private IMapper _iMapper;
 
         public UserService(
             IUserRepository userRepository,
-            IServicesResourceManager serviceResourceManager)
+            IServicesResourceManager serviceResourceManager,
+            IMapper iMapper)
         {
             _userRepository = userRepository;
             _serviceResourceManager = serviceResourceManager;
+            _iMapper = iMapper;
         }
 
         public Task<bool> ExistsUserAsync(string username)
@@ -40,9 +44,27 @@ namespace MWServices
                 throw new DuplicatedUsernameException(_serviceResourceManager.ResourceManager);
             }
 
+            if (DateTime.Now.AddDays(-10) <= birthdate){
+                throw new InvalidBirthDateException(_serviceResourceManager.ResourceManager);
+            }
+
             var userToRegister = BuildUser(username, firstName, lastName, birthdate);
 
             return await _userRepository.RegisterUserAsync(userToRegister);
+        }
+
+        public async Task<IList<Board>> GetUserBoardsAsync(string username)
+        {
+            var userExists = await ExistsUserAsync(username);
+            if (!userExists)
+            {
+                throw new InvalidUsernameException(_serviceResourceManager.ResourceManager);
+            }
+
+            var persistibleResult = await _userRepository.GetUserBoardsAsync(username);
+            var result = _iMapper.Map<IList<PersistibleBoard>, IList<Board>>(persistibleResult);
+
+            return result;
         }
 
         internal static User BuildUser(string username, string firstName, string lastName, DateTime birthdate)
