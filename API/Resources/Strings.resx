@@ -117,6 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BoardInitialized" xml:space="preserve">
+    <value>Boad initialized succesfully</value>
+  </data>
+  <data name="BoardResumed" xml:space="preserve">
+    <value>Boad resumed succesfully</value>
+  </data>
+  <data name="BoardSaved" xml:space="preserve">
+    <value>The boad was created succesfully</value>
+  </data>
   <data name="DefaultErrorMessage" xml:space="preserve">
     <value>An unexpected error ocurred</value>
   </data>

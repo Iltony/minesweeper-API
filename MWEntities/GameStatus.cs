@@ -4,6 +4,7 @@
     {
         NotStarted,
         Active,
-        GameOver
+        GameOver,
+        Resolved
     }
 }
