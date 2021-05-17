@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MWEntities;
 using MWPersistence;
+using Newtonsoft.Json;
 using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
@@ -145,10 +146,17 @@ namespace TestProject
             using (var context = new MWContext(options))
             {
                 var repo = new UserRepository(context);
-
+                
                 const string user1 = "user1";
-                var pb1 = _fixture.Build<PersistibleBoard>().With(b => b.Username, user1).Create();
-                var pb2 = _fixture.Build<PersistibleBoard>().With(b => b.Username, user1).Create();
+                var b1 = _fixture.Create<Board>();
+                var b2 = _fixture.Create<Board>();
+
+                var pb1 = _fixture.Build<PersistibleBoard>()
+                                .With(b => b.BoardDefinition, JsonConvert.SerializeObject(b1).ToString())
+                                .With(b => b.Username, user1).Create();
+                var pb2 = _fixture.Build<PersistibleBoard>()
+                                .With(b => b.BoardDefinition, JsonConvert.SerializeObject(b2).ToString())
+                                .With(b => b.Username, user1).Create();
                 var pb3 = _fixture.Create<PersistibleBoard>();
                 var pb4 = _fixture.Create<PersistibleBoard>();
 
@@ -162,8 +170,6 @@ namespace TestProject
                 Assert.AreEqual(2, result.Count);
             }
         }
-
-
 
 
         [Test]

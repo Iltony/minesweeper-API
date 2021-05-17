@@ -17,6 +17,11 @@ namespace minesweeper_API.Controllers
         /// <returns>The Api result with the registered user with status success</returns>
         Task<IApiResponse> RegisterAsync(string username, string firstName, string lastName, DateTime birthdate);
 
+        /// <summary>
+        /// For a user it returns the saved board
+        /// </summary>
+        /// <param name="username">The username to retrieve the boards</param>
+        /// <returns>Returns the stored board for the user</returns>
         Task<IApiResponse> GetUserBoardsAsync(string username);
     }
 }

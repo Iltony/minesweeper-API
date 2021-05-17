@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using MWServices;
 using System.Resources;
 using System.Reflection;
+using AutoMapper;
 
 namespace minesweeper_API
 {
@@ -38,7 +39,14 @@ namespace minesweeper_API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "minesweeper_API", Version = "v1" });
             });
 
-            //services.AddLocalization(options => options.ResourcesPath = "Resources");
+            // Auto Mapper Configurations
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new MappingProfile());
+            });
+
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IUserRepository, UserRepository>();
