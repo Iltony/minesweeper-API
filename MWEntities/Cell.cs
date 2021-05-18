@@ -8,6 +8,8 @@ namespace MWEntities
         public int Columns { get; set; }
 
         public int Rows { get; set; }
+        
+        public int Position { get; set; }
 
         public CellStatus Status { get; set; }
 

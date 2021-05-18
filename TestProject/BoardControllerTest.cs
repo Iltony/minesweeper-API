@@ -28,6 +28,7 @@ namespace TestProject
         private const string MSG_INVALIDBOARD = "InvalidBoard";
         private const string MSG_INVALIDBOARDFORCURRENTUSER = "InvalidBoardForCurrentUser";
         private const string MSG_INVALIDUSERNAME = "InvalidUsername";
+        private const string MSG_INVALIDCELL= "InvalidCell";
         private const string MSG_DEFAULTERRORMESSAGE = "DefaultErrorMessage";
         
         [SetUp]
@@ -45,6 +46,7 @@ namespace TestProject
             A.CallTo(() => _resourceManager.GetString(MSG_INVALIDBOARDFORCURRENTUSER)).Returns(MSG_INVALIDBOARDFORCURRENTUSER);
             A.CallTo(() => _resourceManager.GetString(MSG_INVALIDUSERNAME)).Returns(MSG_INVALIDUSERNAME);
             A.CallTo(() => _resourceManager.GetString(MSG_DEFAULTERRORMESSAGE)).Returns(MSG_DEFAULTERRORMESSAGE);
+            A.CallTo(() => _resourceManager.GetString(MSG_INVALIDCELL)).Returns(MSG_INVALIDCELL);
 
             _servicesResourceManager = new ServicesResourceManager(_resourceManager);
             _controller = new BoardController(_service, _servicesResourceManager);
@@ -160,17 +162,38 @@ namespace TestProject
 
 
         [Test]
-        public async Task InitializeAsync_WhenInvalidUsernameBoardExceptionOcurrs_MustReturnError()
+        public async Task InitializeAsync_WhenInvalidUsernameExceptionOcurrs_MustReturnError()
         {
+            var firstClickCell = _fixture.Create<Cell>();
             var username= _fixture.Create<string>();
             var cols = _fixture.Create<int>();
             var rows = _fixture.Create<int>();
             var mines = _fixture.Create<int>();
             
-            A.CallTo(() => _service.InitializeAsync(A<string>._, A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => _service.InitializeAsync(A<Cell>._, A<string>._, A<int>._, A<int>._, A<int>._))
                     .Throws(new InvalidUsernameException(_resourceManager));
 
-            var result = await _controller.InitializeAsync(username, cols, rows, mines) as ErrorResponse;
+            var result = await _controller.InitializeAsync(firstClickCell, username, cols, rows, mines) as ErrorResponse;
+
+            Assert.AreEqual("error", result.Status);
+            Assert.AreEqual(MSG_INVALIDUSERNAME, result.Message);
+        }
+
+
+
+        [Test]
+        public async Task InitializeAsync_WhenInvalidCellExceptionOcurrs_MustReturnError()
+        {
+            var firstClickCell = _fixture.Create<Cell>();
+            var username = _fixture.Create<string>();
+            var cols = _fixture.Create<int>();
+            var rows = _fixture.Create<int>();
+            var mines = _fixture.Create<int>();
+
+            A.CallTo(() => _service.InitializeAsync(A<Cell>._, A<string>._, A<int>._, A<int>._, A<int>._))
+                    .Throws(new InvalidUsernameException(_resourceManager));
+
+            var result = await _controller.InitializeAsync(firstClickCell, username, cols, rows, mines) as ErrorResponse;
 
             Assert.AreEqual("error", result.Status);
             Assert.AreEqual(MSG_INVALIDUSERNAME, result.Message);
@@ -179,15 +202,16 @@ namespace TestProject
         [Test]
         public async Task InitializeAsync_WhenAnErrorOcurrs_MustReturnGenericError()
         {
+            var firstClickCell = _fixture.Create<Cell>();
             var username = _fixture.Create<string>();
             var cols = _fixture.Create<int>();
             var rows = _fixture.Create<int>();
             var mines = _fixture.Create<int>();
 
-            A.CallTo(() => _service.InitializeAsync(A<string>._, A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => _service.InitializeAsync(A<Cell>._, A<string>._, A<int>._, A<int>._, A<int>._))
                     .Throws(new Exception());
-
-            var result = await _controller.InitializeAsync(username, cols, rows, mines) as ErrorResponse;
+            
+            var result = await _controller.InitializeAsync(firstClickCell, username, cols, rows, mines) as ErrorResponse;
 
             Assert.AreEqual("error", result.Status);
             Assert.AreEqual(MSG_DEFAULTERRORMESSAGE, result.Message);
@@ -196,38 +220,67 @@ namespace TestProject
         [Test]
         public async Task InitializeAsync_WhenIsSaved_MustReturnSuccess()
         {
+            var firstClickCell = _fixture.Create<Cell>();
             var username = _fixture.Create<string>();
             var cols = _fixture.Create<int>();
             var rows = _fixture.Create<int>();
             var mines = _fixture.Create<int>(); 
             var board = _fixture.Create<Board>();
 
-            A.CallTo(() => _service.InitializeAsync(A<string>._, A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => _service.InitializeAsync(A<Cell>._, A<string>._, A<int>._, A<int>._, A<int>._))
                     .Returns(board);
 
-            var result = await _controller.InitializeAsync(username, cols, rows, mines) as SuccessResponse<Board>;
+            var result = await _controller.InitializeAsync(firstClickCell, username, cols, rows, mines) as SuccessResponse<Board>;
 
             Assert.AreEqual("success", result.Status);
             Assert.AreEqual(MSG_BOARDINITIALIZED, result.Message);
             Assert.AreEqual(board, result.Data);
         }
 
+
+        [Test]
+        public async Task InitializeAsync_WhenUsernameIsNotSet_DefaultIsNull()
+        {
+            var firstClickCell = _fixture.Create<Cell>();
+            var columns = 5;
+            var rows = 5;
+            var mines = 3;
+            var board = _fixture.Create<Board>();
+
+            A.CallTo(() => _service.InitializeAsync(A<Cell>._, A<string>._, A<int>._, A<int>._, A<int>._))
+                    .Returns(board);
+
+            var result = await _controller.InitializeAsync(firstClickCell, columns: columns, rows: rows, mines: mines) as SuccessResponse<Board>;
+
+            A.CallTo(() => _service.InitializeAsync(
+                A<Cell>.That.Matches(i => i == firstClickCell),
+                A<string>.That.Matches(i => i == null),
+                A<int>.That.Matches(i => i == columns),
+                A<int>.That.Matches(i => i == rows),
+                A<int>.That.Matches(i => i == mines))
+            ).MustHaveHappenedOnceExactly();
+
+
+
+        }
         [Test]
         public async Task InitializeAsync_WhenColumnsAreNotSet_DefaultIs10()
         {
             const int EXPECTEDDEFAULTNUMBER = 10;
 
+            var firstClickCell = _fixture.Create<Cell>();
             var username = _fixture.Create<string>();
             var rows = 5;
             var mines = 3;
             var board = _fixture.Create<Board>();
 
-            A.CallTo(() => _service.InitializeAsync(A<string>._, A<int>._, A<int>._, A<int>._))
+            A.CallTo(() => _service.InitializeAsync(A<Cell>._, A<string>._, A<int>._, A<int>._, A<int>._))
                     .Returns(board);
 
-            var result = await _controller.InitializeAsync(username: username, rows: rows, mines: mines) as SuccessResponse<Board>;
+            var result = await _controller.InitializeAsync(firstClickCell, username: username, rows: rows, mines: mines) as SuccessResponse<Board>;
 
             A.CallTo(() => _service.InitializeAsync(
+                A<Cell>.That.Matches(i => i == firstClickCell),
                 A<string>.That.Matches(i=>i ==username),
                 A<int>.That.Matches(i => i == EXPECTEDDEFAULTNUMBER), 
                 A<int>.That.Matches(i => i == rows), 
@@ -237,6 +290,58 @@ namespace TestProject
 
 
 
+        [Test]
+        public async Task InitializeAsync_WhenRowsAreNotSet_DefaultIs10()
+        {
+            const int EXPECTEDDEFAULTNUMBER = 10;
+
+            var firstClickCell = _fixture.Create<Cell>();
+            var username = _fixture.Create<string>();
+            var columns = 5;
+            var mines = 3;
+            var board = _fixture.Create<Board>();
+
+            A.CallTo(() => _service.InitializeAsync(A<Cell>._, A<string>._, A<int>._, A<int>._, A<int>._))
+                    .Returns(board);
+
+            var result = await _controller.InitializeAsync(firstClickCell, username: username, columns: columns, mines: mines) as SuccessResponse<Board>;
+
+            A.CallTo(() => _service.InitializeAsync(
+                A<Cell>.That.Matches(i => i == firstClickCell),
+                A<string>.That.Matches(i => i == username),
+                A<int>.That.Matches(i => i == columns),
+                A<int>.That.Matches(i => i == EXPECTEDDEFAULTNUMBER),
+                A<int>.That.Matches(i => i == mines))
+            ).MustHaveHappenedOnceExactly();
+        }
+
+
+
+
+        [Test]
+        public async Task InitializeAsync_WhenMinesAreNotSet_DefaultIs10()
+        {
+            const int EXPECTEDDEFAULTNUMBER = 10;
+
+            var firstClickCell = _fixture.Create<Cell>();
+            var username = _fixture.Create<string>();
+            var columns = 5;
+            var rows = 3;
+            var board = _fixture.Create<Board>();
+
+            A.CallTo(() => _service.InitializeAsync(A<Cell>._, A<string>._, A<int>._, A<int>._, A<int>._))
+                    .Returns(board);
+
+            var result = await _controller.InitializeAsync(firstClickCell, username: username, columns: columns, rows: rows) as SuccessResponse<Board>;
+
+            A.CallTo(() => _service.InitializeAsync(
+                A<Cell>.That.Matches(i => i == firstClickCell),
+                A<string>.That.Matches(i => i == username),
+                A<int>.That.Matches(i => i == columns),
+                A<int>.That.Matches(i => i == rows),
+                A<int>.That.Matches(i => i == EXPECTEDDEFAULTNUMBER))
+            ).MustHaveHappenedOnceExactly();
+        }
 
     }
 }

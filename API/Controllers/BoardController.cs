@@ -75,13 +75,13 @@ namespace minesweeper_API.Controllers
 
         [HttpPost]
         [Route("initialize")]
-        public async Task<IApiResponse> InitializeAsync(string username, int columns = 10, int rows = 10, int mines = 10)
+        public async Task<IApiResponse> InitializeAsync(Cell initialClickCell, string username, int columns = 10, int rows = 10, int mines = 10)
         {
             var message = _serviceResourceManager.ResourceManager.GetString("BoardInitialized");
 
             try
             {
-                var data = await _boardService.InitializeAsync(username, columns, rows, mines);
+                var data = await _boardService.InitializeAsync(initialClickCell, username, columns, rows, mines);
 
                 return new SuccessResponse<Board>
                 {
@@ -92,7 +92,7 @@ namespace minesweeper_API.Controllers
             }
             catch (Exception ex)
             {
-                return (ex is InvalidUsernameException) ?
+                return (ex is InvalidUsernameException || ex is InvalidCellException) ?
                     new ErrorResponse { Message = ex.Message } :
                     new ErrorResponse { Message = _serviceResourceManager.ResourceManager.GetString("DefaultErrorMessage") };
             }

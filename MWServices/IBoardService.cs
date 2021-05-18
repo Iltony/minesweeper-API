@@ -25,12 +25,13 @@ namespace MWServices
         /// <summary>
         /// Initialize the board with the specified properties
         /// </summary>
+        /// <param name="initialClickCell">The first click cell></param>
         /// <param name="username">The current user name</param>
         /// <param name="columns">The number of columns, by default 10</param>
         /// <param name="rows">The number of rows, by default 10</param>
         /// <param name="mines">The number of mines></param>
         /// <returns>The initialized board</returns>
-        Task<Board> InitializeAsync(string username, int columns, int rows, int mines);
+        Task<Board> InitializeAsync(Cell initialClickCell, string username, int columns, int rows, int mines);
 
     }
 }
