@@ -2,9 +2,6 @@
 using MWEntities;
 using MWServices;
 using System;
-using System.Collections.Generic;
-using System.Resources;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace minesweeper_API.Controllers

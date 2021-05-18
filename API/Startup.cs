@@ -48,8 +48,21 @@ namespace minesweeper_API
             IMapper mapper = mapperConfig.CreateMapper();
             services.AddSingleton(mapper);
 
-            services.AddScoped<IUserService, UserService>();
+            
+            services.AddScoped<IGameStatusResolver, GameStatusResolver>();
+            services.AddScoped<IBoardCreator, BoardCreator>();
+            services.AddScoped<ICellResolver, CellResolver>();
+
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IBoardRepository, BoardRepository>();
+
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IBoardService, BoardService>();
+            services.AddScoped<ICellService, CellService>();
+            services.AddScoped<IBoardCreator, BoardCreator>();
+
+
+
             services.AddScoped<IServicesResourceManager>
                 (srm => new ServicesResourceManager(new ResourceManager("minesweeper_API.Resources.Strings", Assembly.GetExecutingAssembly())));
         }

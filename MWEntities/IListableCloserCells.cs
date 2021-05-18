@@ -7,6 +7,6 @@ namespace MWInterfaces
     {
         int CloserMinesNumber { get; set; }
 
-        IList<Cell> GetCloserMines();
+        IList<Cell> GetCloserCells(int maxColumns, int maxRows);
     }
 }

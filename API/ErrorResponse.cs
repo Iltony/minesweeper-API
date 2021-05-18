@@ -1,6 +1,4 @@
-﻿using MWInterfaces;
-
-namespace minesweeper_API
+﻿namespace minesweeper_API
 {
     public class ErrorResponse : IApiResponse
     {

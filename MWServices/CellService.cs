@@ -2,33 +2,36 @@
 using MWEntities;
 using MWPersistence;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MWServices
 {
-    public class BoardService : IBoardService
+    public class CellService : ICellService
     {
-        private ICellService _cellService;
         private IBoardRepository _boardRepository;
         private IUserRepository _userRepository;
         private IServicesResourceManager _serviceResourceManager;
         private IMapper _iMapper;
         private IBoardCreator _gameProcessor;
-
-        public BoardService(
-            ICellService cellService,
+        private ICellResolver _cellResolver;
+        private IGameStatusResolver _gameStatusResolver;
+        public CellService(
             IBoardRepository boardRepository,
             IUserRepository userRepository,
             IServicesResourceManager serviceResourceManager,
             IMapper iMapper,
-            IBoardCreator gameProcessor)
+            IBoardCreator gameProcessor,
+            ICellResolver cellResolver,
+            IGameStatusResolver gameStatusResolver)
         {
-            _cellService = cellService;
             _boardRepository = boardRepository;
             _userRepository = userRepository;
             _serviceResourceManager = serviceResourceManager;
             _iMapper = iMapper;
             _gameProcessor = gameProcessor;
+            _cellResolver = cellResolver;
+            _gameStatusResolver = gameStatusResolver;
         }
 
         public async Task<Board> SaveBoardAsync(Board board)
@@ -69,7 +72,7 @@ namespace MWServices
             var newBoard = _gameProcessor.GenerateBoard(initialClickCell, user, columns, rows, mines);
 
             // Process the first click
-            newBoard = await _cellService.CheckAsync(newBoard, initialClickCell.Column, initialClickCell.Row);
+            newBoard = await CheckAsync(newBoard, initialClickCell.Column, initialClickCell.Row);
 
             return newBoard;
         }
@@ -95,6 +98,69 @@ namespace MWServices
             }
 
             return user;
+        }
+
+
+        public async Task<Board> CheckAsync(Board board, int cellColumn, int cellRow)
+        {
+            if ((cellColumn < 1 || cellColumn > board.Columns)
+                || (cellRow < 1 || cellRow > board.Rows))
+            {
+                throw new InvalidCellException(_serviceResourceManager.ResourceManager);
+            }
+
+            var cell = board.Cells.Where(c => c.Column == cellColumn && c.Row == cellRow).FirstOrDefault();
+
+            if (cell.ItIsAMine)
+            {
+                board.GameStatus = GameStatus.GameOver;
+            }
+            else { 
+                 //Resolve the cell and adjacents
+                _cellResolver.ResolveCell(board.Cells, cell, board.Columns, board.Rows);
+            }
+                                
+            await _gameStatusResolver.EvaluateGameStatus(board);
+
+            return board;
+        }
+
+        public async Task<Board> FlagAsync(Board board, int cellColumn, int cellRow)
+        {
+            if ((cellColumn < 1 || cellColumn > board.Columns)
+                  || (cellRow < 1 || cellRow > board.Rows))
+            {
+                throw new InvalidCellException(_serviceResourceManager.ResourceManager);
+            }
+
+            var affectedCell = board.Cells.Where(c => c.Column == cellColumn && c.Row == c.Row).FirstOrDefault();
+            CellStatus? newStatus = null;
+            
+            switch (affectedCell.Status)
+            {
+                case CellStatus.Clear:
+                    newStatus = CellStatus.Flagged;
+                    break;
+                case CellStatus.Flagged:
+                    newStatus = CellStatus.Suspicious;
+                    break;
+                case CellStatus.Suspicious:
+                    newStatus = CellStatus.Clear;
+                    break;
+                case CellStatus.Revealed:
+                default:
+                    //otherwise does nothing
+                    break;
+            }
+
+            if (newStatus.HasValue)
+            {
+                board.Cells.Where(c => c.Column == cellColumn && c.Row == c.Row).FirstOrDefault().Status = newStatus.Value;
+            }
+
+            await _gameStatusResolver.EvaluateGameStatus(board);
+
+            return board;
         }
     }
 }

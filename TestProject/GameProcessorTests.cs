@@ -11,7 +11,7 @@ namespace TestProject
     [TestFixture]
     public class GameProcessorTests
     {
-        private IGameProcessor _gameProcessor;
+        private IBoardCreator _gameProcessor;
         private IMapper _mapper;
         private Fixture _fixture;
 
@@ -19,7 +19,7 @@ namespace TestProject
         public void SetUp() {
             _fixture = Utils.GetFixture();
             _mapper = A.Fake<IMapper>();
-            _gameProcessor = new GameProcessor();
+            _gameProcessor = new BoardCreator();
         }
 
         [TestCase(6, 8, 12)]
@@ -31,8 +31,8 @@ namespace TestProject
             var expectedCells = columns * rows;
             var user = _fixture.Create<User>();
             var initialClickCell = _fixture.Build<Cell>()
-                                            .With(c=>c.Columns, 2)
-                                            .With(c => c.Rows, 2)
+                                            .With(c=>c.Column, 2)
+                                            .With(c => c.Row, 2)
                                             .Create();
 
 
@@ -50,8 +50,8 @@ namespace TestProject
         {
             var user = _fixture.Create<User>();
             var initialClickCell = _fixture.Build<Cell>()
-                                            .With(c => c.Columns, 2)
-                                            .With(c => c.Rows, 2)
+                                            .With(c => c.Column, 2)
+                                            .With(c => c.Row, 2)
                                             .Create();
 
 
@@ -70,8 +70,8 @@ namespace TestProject
         {
             var user = _fixture.Create<User>();
             var initialClickCell = _fixture.Build<Cell>()
-                                            .With(c => c.Columns, 2)
-                                            .With(c => c.Rows, 2)
+                                            .With(c => c.Column, 2)
+                                            .With(c => c.Row, 2)
                                             .Create();
 
 
@@ -92,8 +92,8 @@ namespace TestProject
         {
             var user = _fixture.Create<User>();
             var initialClickCell = _fixture.Build<Cell>()
-                                            .With(c => c.Columns, 4)
-                                            .With(c => c.Rows, 2)
+                                            .With(c => c.Column, 4)
+                                            .With(c => c.Row, 2)
                                             .Create();
 
             var result = _gameProcessor.GenerateBoard(initialClickCell, user, columns, rows, mines);
@@ -115,8 +115,8 @@ namespace TestProject
         public void GenerateBoards_IfUserisNull_HasNullOwner(int columns, int rows, int mines)
         {
             var initialClickCell = _fixture.Build<Cell>()
-                                            .With(c => c.Columns, 4)
-                                            .With(c => c.Rows, 2)
+                                            .With(c => c.Column, 4)
+                                            .With(c => c.Row, 2)
                                             .Create();
 
             var result = _gameProcessor.GenerateBoard(initialClickCell, null, columns, rows, mines);

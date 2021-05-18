@@ -2,22 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MWServices
 {
-    public class GameProcessor : IGameProcessor
+    public class BoardCreator : IBoardCreator
     {
-        public async Task<Board> CheckAsync(Board board, int column, int rows)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task<Board> FlagAsync(Board board, int column, int rows)
-        {
-            throw new NotImplementedException();
-        }
 
         public Board GenerateBoard(Cell initialClickCell, User user, int columns, int rows, int mines)
         {
@@ -63,7 +52,7 @@ namespace MWServices
                         // takes the element with the position and set the it's mine flag
                         var cell = cells.Where<Cell>(c => c.Position == newMinePosition && !c.ItIsAMine).First();
 
-                        if (!(cell.Columns == initialClickCell.Columns && cell.Rows == initialClickCell.Rows))
+                        if (!(cell.Column == initialClickCell.Column && cell.Row == initialClickCell.Row))
                         {
                             cell.ItIsAMine = true;
 
@@ -79,14 +68,14 @@ namespace MWServices
             // Fills the cells
             var pos = 1;
 
-            for (int i = 0; i < rows; i++)
+            for (int i = 1; i <= rows; i++)
             {
-                for (int j = 0; j < columns; j++)
+                for (int j = 1; j <= columns; j++)
                 {
                     var newCell = new Cell
                     {
-                        Rows = i,
-                        Columns = j,
+                        Row = i,
+                        Column = j,
                         Position = pos,
                         CloserMinesNumber = 0,
                         ItIsAMine = false,
