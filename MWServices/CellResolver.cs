@@ -34,8 +34,8 @@ namespace MWServices
                 }
             }
 
-            boardCells.Where(c => c.Column == cell.Column && c.Row == cell.Row).First().Status = CellStatus.Revealed;
-            boardCells.Where(c => c.Column == cell.Column && c.Row == cell.Row).First().CloserMinesNumber = minesCounter;
+            boardCells.First(c => c.Column == cell.Column && c.Row == cell.Row).Status = CellStatus.Revealed;
+            boardCells.First(c => c.Column == cell.Column && c.Row == cell.Row).CloserMinesNumber = minesCounter;
         }
     }
 }

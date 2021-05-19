@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using MWEntities;
 using MWServices;
 using System;
@@ -13,16 +14,18 @@ namespace minesweeper_API.Controllers
     {
         private IBoardService _boardService;
         private IServicesResourceManager _serviceResourceManager;
+        private IMapper _mapper;
 
-        public BoardController(IBoardService boardService, IServicesResourceManager serviceResourceManager) : base()
+        public BoardController(IBoardService boardService, IServicesResourceManager serviceResourceManager, IMapper mapper) : base()
         {
             _boardService = boardService;
             _serviceResourceManager = serviceResourceManager;
+            _mapper = mapper;
         }
 
         [HttpPost]
         [Route("save")]
-        public async Task<IApiResponse> SaveBoardAsync(Board board)
+        public async Task<IApiResponse> SaveBoardAsync([FromBody] Board board)
         {
             var message = _serviceResourceManager.ResourceManager.GetString("BoardSaved");
 
@@ -47,13 +50,13 @@ namespace minesweeper_API.Controllers
 
         [HttpPost]
         [Route("resume")]
-        public async Task<IApiResponse> ResumeAsync(Guid boardId, string currentUserName)
+        public async Task<IApiResponse> ResumeAsync([FromBody] ResumeRequest resumeRequest)
         {
             var message = _serviceResourceManager.ResourceManager.GetString("BoardResumed");
 
             try
             {
-                var data = await _boardService.ResumeAsync(boardId, currentUserName);
+                var data = await _boardService.ResumeAsync(resumeRequest.BoardId, resumeRequest.CurrentUserName);
 
                 return new SuccessResponse<Board>
                 {
@@ -72,13 +75,19 @@ namespace minesweeper_API.Controllers
 
         [HttpPost]
         [Route("initialize")]
-        public async Task<IApiResponse> InitializeAsync(Cell initialClickCell, string username, int columns = 10, int rows = 10, int mines = 10)
+        public async Task<IApiResponse> InitializeAsync([FromBody] InitializeRequest initializeRequest)
         {
             var message = _serviceResourceManager.ResourceManager.GetString("BoardInitialized");
 
             try
-            {
-                var data = await _boardService.InitializeAsync(initialClickCell, username, columns, rows, mines);
+            { 
+                var cell = _mapper.Map<Cell>(initializeRequest.InitialClickCell);
+                var data = await _boardService.InitializeAsync(
+                                                cell, 
+                                                initializeRequest.Username, 
+                                                initializeRequest.Columns, 
+                                                initializeRequest.Rows, 
+                                                initializeRequest.Mines);
 
                 return new SuccessResponse<Board>
                 {

@@ -109,15 +109,19 @@ namespace MWServices
                 throw new InvalidCellException(_serviceResourceManager.ResourceManager);
             }
 
-            var cell = board.Cells.Where(c => c.Column == cellColumn && c.Row == cellRow).FirstOrDefault();
+            var cell = board.Cells.FirstOrDefault(c => c.Column == cellColumn && c.Row == cellRow);
 
-            if (cell.ItIsAMine)
+            if (cell != null)
             {
-                board.GameStatus = GameStatus.GameOver;
-            }
-            else { 
-                 //Resolve the cell and adjacents
-                _cellResolver.ResolveCell(board.Cells, cell, board.Columns, board.Rows);
+                if (cell.ItIsAMine)
+                {
+                    board.GameStatus = GameStatus.GameOver;
+                }
+                else
+                {
+                    //Resolve the cell and adjacents
+                    _cellResolver.ResolveCell(board.Cells, cell, board.Columns, board.Rows);
+                }
             }
                                 
             await _gameStatusResolver.EvaluateGameStatus(board);
@@ -133,29 +137,35 @@ namespace MWServices
                 throw new InvalidCellException(_serviceResourceManager.ResourceManager);
             }
 
-            var affectedCell = board.Cells.Where(c => c.Column == cellColumn && c.Row == c.Row).FirstOrDefault();
-            CellStatus? newStatus = null;
-            
-            switch (affectedCell.Status)
-            {
-                case CellStatus.Clear:
-                    newStatus = CellStatus.Flagged;
-                    break;
-                case CellStatus.Flagged:
-                    newStatus = CellStatus.Suspicious;
-                    break;
-                case CellStatus.Suspicious:
-                    newStatus = CellStatus.Clear;
-                    break;
-                case CellStatus.Revealed:
-                default:
-                    //otherwise does nothing
-                    break;
-            }
+            var affectedCell = board.Cells.FirstOrDefault(c => c.Column == cellColumn && c.Row == cellRow);
 
-            if (newStatus.HasValue)
+            if(affectedCell != null)
             {
-                board.Cells.Where(c => c.Column == cellColumn && c.Row == c.Row).FirstOrDefault().Status = newStatus.Value;
+
+                CellStatus? newStatus = null;
+            
+                switch (affectedCell.Status)
+                {
+                    case CellStatus.Clear:
+                        newStatus = CellStatus.Flagged;
+                        break;
+                    case CellStatus.Flagged:
+                        newStatus = CellStatus.Suspicious;
+                        break;
+                    case CellStatus.Suspicious:
+                        newStatus = CellStatus.Clear;
+                        break;
+                    case CellStatus.Revealed:
+                    default:
+                        //otherwise does nothing
+                        break;
+                }
+
+                if (newStatus.HasValue)
+                {
+                    affectedCell.Status = newStatus.Value;
+                }
+
             }
 
             await _gameStatusResolver.EvaluateGameStatus(board);

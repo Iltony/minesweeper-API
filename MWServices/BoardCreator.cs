@@ -50,13 +50,16 @@ namespace MWServices
                     if (cells.Any(c => c.Position == newMinePosition && !c.ItIsAMine))
                     {
                         // takes the element with the position and set the it's mine flag
-                        var cell = cells.Where<Cell>(c => c.Position == newMinePosition && !c.ItIsAMine).First();
+                        var cell = cells.FirstOrDefault<Cell>(c => c.Position == newMinePosition && !c.ItIsAMine);
 
-                        if (!(cell.Column == initialClickCell.Column && cell.Row == initialClickCell.Row))
+                        if (cell != null)
                         {
-                            cell.ItIsAMine = true;
+                            if (!(cell.Column == initialClickCell.Column && cell.Row == initialClickCell.Row))
+                            {
+                                cell.ItIsAMine = true;
 
-                            minesCells.Add(cell);
+                                minesCells.Add(cell);
+                            }
                         }
                     }
                 }

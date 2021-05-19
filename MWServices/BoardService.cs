@@ -84,7 +84,7 @@ namespace MWServices
             User user = null;
 
             // if the user is guest is not validated, otherwise it must exist in the database
-            if (username != null)
+            if (!string.IsNullOrEmpty(username))
             {
                 user = await _userRepository.GetUserAsync(username);
 

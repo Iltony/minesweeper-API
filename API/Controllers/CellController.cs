@@ -22,11 +22,11 @@ namespace minesweeper_API.Controllers
 
         [HttpPost]
         [Route("check")]
-        public async Task<IApiResponse> CheckAsync(Board board, int cellColumn, int cellRow)
+        public async Task<IApiResponse> CheckAsync([FromBody] CellRequest cellRequest)
         {
             try
             {
-                var data = await _cellService.CheckAsync(board, cellColumn, cellRow);
+                var data = await _cellService.CheckAsync(cellRequest.Board, cellRequest.Cell.Column, cellRequest.Cell.Row);
 
                 return new SuccessResponse<Board>
                 {
@@ -44,11 +44,11 @@ namespace minesweeper_API.Controllers
 
         [HttpPost]
         [Route("flag")]
-        public async Task<IApiResponse> FlagAsync(Board board, int cellColumn, int cellRow)
+        public async Task<IApiResponse> FlagAsync([FromBody] CellRequest cellRequest)
         {
             try
             {
-                var data = await _cellService.FlagAsync(board, cellColumn, cellRow);
+                var data = await _cellService.FlagAsync(cellRequest.Board, cellRequest.Cell.Column, cellRequest.Cell.Row);
 
                 return new SuccessResponse<Board>
                 {

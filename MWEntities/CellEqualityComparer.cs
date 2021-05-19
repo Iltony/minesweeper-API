@@ -20,7 +20,8 @@ namespace MWEntities
 
         public int GetHashCode([DisallowNull] CellKeySelector obj)
         {
-            throw new NotImplementedException();
+            if (obj == null) return 0;
+            return obj.GetHashCode();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using MWEntities;
+﻿using Microsoft.AspNetCore.Mvc;
+using minesweeper_API.Controllers;
 using System.Threading.Tasks;
 
 namespace minesweeper_API
@@ -8,20 +9,16 @@ namespace minesweeper_API
         /// <summary>
         /// Check a cell in the board
         /// </summary>
-        /// <param name="board">The board where the cell is placed</param>
-        /// <param name="cellColumn">The position of the colunm</param>
-        /// <param name="cellRow">The position of the row</param>
+        /// <param name="cellRequest">The request for the method</param>
         /// <returns>The board with the cells</returns>
-        Task<IApiResponse> CheckAsync(Board board, int cellColumn, int cellRow);
+        Task<IApiResponse> CheckAsync([FromBody] CellRequest cellRequest);
 
         /// <summary>
         /// Flags a cell in the board
         /// </summary>
         /// <remarks>If the cell is already flaged it set to the next status, flagged, question, clear</remarks
-        /// <param name="board">The board where the cell is placed</param>
-        /// <param name="cellColumn">The position of the colunm</param>
-        /// <param name="cellRow">The position of the row</param>
+        /// <param name="cellRequest">The request for the method</param>
         /// <returns>The board with the cells</returns>
-        Task<IApiResponse> FlagAsync(Board board, int cellColumn, int cellRow);
+        Task<IApiResponse> FlagAsync([FromBody] CellRequest cellRequest);
     }
 }

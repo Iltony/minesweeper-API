@@ -43,14 +43,16 @@ namespace TestProject
         [Test]
         public async Task CheckAsync_WhenInvalidCellExceptionOcurrs_MustReturnError()
         {
-            var board = _fixture.Create<Board>();
-            var col = _fixture.Create<int>();
-            var row = _fixture.Create<int>();
+            var request = new CellRequest
+            {
+                Board = _fixture.Create<Board>(),
+                Cell = _fixture.Create<CellCoordinates>()
+            };
 
             A.CallTo(() => _service.CheckAsync(A<Board>._, A<int>._, A<int>._))
                     .Throws(new InvalidCellException(_resourceManager));
 
-            var result = await _controller.CheckAsync(board, col, row) as ErrorResponse;
+            var result = await _controller.CheckAsync(request) as ErrorResponse;
 
             Assert.AreEqual("error", result.Status);
             Assert.AreEqual(MSG_INVALIDCELL, result.Message);
@@ -59,14 +61,16 @@ namespace TestProject
         [Test]
         public async Task CheckAsync_GameNotStartedExceptionOcurrs_MustReturnError()
         {
-            var board = _fixture.Create<Board>();
-            var col = _fixture.Create<int>();
-            var row = _fixture.Create<int>();
+            var request = new CellRequest
+            {
+                Board = _fixture.Create<Board>(),
+                Cell = _fixture.Create<CellCoordinates>()
+            };
 
             A.CallTo(() => _service.CheckAsync(A<Board>._, A<int>._, A<int>._))
                     .Throws(new GameNotStartedException(_resourceManager));
 
-            var result = await _controller.CheckAsync(board, col, row) as ErrorResponse;
+            var result = await _controller.CheckAsync(request) as ErrorResponse;
 
             Assert.AreEqual("error", result.Status);
             Assert.AreEqual(MSG_GAMENOTSTARTED, result.Message);
@@ -75,14 +79,17 @@ namespace TestProject
         [Test]
         public async Task CheckAsync_WhenGenericExceptionOcurrs_MustReturnGenericError()
         {
-            var board = _fixture.Create<Board>();
-            var col = _fixture.Create<int>();
-            var row = _fixture.Create<int>();
+            var request = new CellRequest
+            {
+                Board = _fixture.Create<Board>(),
+                Cell = _fixture.Create<CellCoordinates>()
+            };
+
 
             A.CallTo(() => _service.CheckAsync(A<Board>._, A<int>._, A<int>._))
                     .Throws(new Exception());
 
-            var result = await _controller.CheckAsync(board, col, row) as ErrorResponse;
+            var result = await _controller.CheckAsync(request) as ErrorResponse;
 
             Assert.AreEqual("error", result.Status);
             Assert.AreEqual(MSG_DEFAULTERRORMESSAGE, result.Message);
@@ -92,30 +99,35 @@ namespace TestProject
         public async Task CheckAsync_WhenIsOK_MustReturnSuccess()
         {
             var board = _fixture.Create<Board>();
+            var request = new CellRequest
+            {
+                Board = board,
+                Cell = _fixture.Create<CellCoordinates>()
+            };
+
             var col = _fixture.Create<int>();
             var row = _fixture.Create<int>();
 
             A.CallTo(() => _service.CheckAsync(A<Board>._, A<int>._, A<int>._)).Returns(board);
 
-            var result = await _controller.CheckAsync(board, col, row) as SuccessResponse<Board>;
+            var result = await _controller.CheckAsync(request) as SuccessResponse<Board>;
 
             Assert.AreEqual("success", result.Status);
             Assert.AreEqual(board, result.Data);
         }
 
-
-
         [Test]
         public async Task FlagAsync_WhenInvalidCellExceptionOcurrs_MustReturnError()
         {
-            var board = _fixture.Create<Board>();
-            var col = _fixture.Create<int>();
-            var row = _fixture.Create<int>();
+            var request = new CellRequest{
+                Board = _fixture.Create<Board>(),
+                Cell = _fixture.Create<CellCoordinates>()
+            };
 
             A.CallTo(() => _service.FlagAsync(A<Board>._, A<int>._, A<int>._))
                     .Throws(new InvalidCellException(_resourceManager));
 
-            var result = await _controller.FlagAsync(board, col, row) as ErrorResponse;
+            var result = await _controller.FlagAsync(request) as ErrorResponse;
 
             Assert.AreEqual("error", result.Status);
             Assert.AreEqual(MSG_INVALIDCELL, result.Message);
@@ -124,14 +136,16 @@ namespace TestProject
         [Test]
         public async Task FlagAsync_WhenGameNotStartedExceptionOcurrs_MustReturnError()
         {
-            var board = _fixture.Create<Board>();
-            var col = _fixture.Create<int>();
-            var row = _fixture.Create<int>();
+            var request = new CellRequest
+            {
+                Board = _fixture.Create<Board>(),
+                Cell = _fixture.Create<CellCoordinates>()
+            };
 
             A.CallTo(() => _service.FlagAsync(A<Board>._, A<int>._, A<int>._))
                     .Throws(new GameNotStartedException(_resourceManager));
 
-            var result = await _controller.FlagAsync(board, col, row) as ErrorResponse;
+            var result = await _controller.FlagAsync(request) as ErrorResponse;
 
             Assert.AreEqual("error", result.Status);
             Assert.AreEqual(MSG_GAMENOTSTARTED, result.Message);
@@ -140,14 +154,16 @@ namespace TestProject
         [Test]
         public async Task FlagAsync_WhenGenericExceptionOcurrs_MustReturnGenericError()
         {
-            var board = _fixture.Create<Board>();
-            var col = _fixture.Create<int>();
-            var row = _fixture.Create<int>();
+            var request = new CellRequest
+            {
+                Board = _fixture.Create<Board>(),
+                Cell = _fixture.Create<CellCoordinates>()
+            };
 
             A.CallTo(() => _service.FlagAsync(A<Board>._, A<int>._, A<int>._))
                     .Throws(new Exception());
 
-            var result = await _controller.FlagAsync(board, col, row) as ErrorResponse;
+            var result = await _controller.FlagAsync(request) as ErrorResponse;
 
             Assert.AreEqual("error", result.Status);
             Assert.AreEqual(MSG_DEFAULTERRORMESSAGE, result.Message);
@@ -157,12 +173,15 @@ namespace TestProject
         public async Task FlagAsync_WhenIsOK_MustReturnSuccess()
         {
             var board = _fixture.Create<Board>();
-            var col = _fixture.Create<int>();
-            var row = _fixture.Create<int>();
+            var request = new CellRequest
+            {
+                Board = board,
+                Cell = _fixture.Create<CellCoordinates>()
+            };
 
             A.CallTo(() => _service.FlagAsync(A<Board>._, A<int>._, A<int>._)).Returns(board);
 
-            var result = await _controller.FlagAsync(board, col, row) as SuccessResponse<Board>;
+            var result = await _controller.FlagAsync(request) as SuccessResponse<Board>;
 
             Assert.AreEqual("success", result.Status);
             Assert.AreEqual(board, result.Data);

@@ -2,7 +2,7 @@
 {
     public enum CellStatus : short
     {
-        Clear,
+        Clear = 0,
         Flagged,
         Suspicious,
         Revealed

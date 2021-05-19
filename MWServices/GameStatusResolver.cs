@@ -10,6 +10,8 @@ namespace MWServices
         {
             if (board.GameStatus == GameStatus.Active)
             {
+
+                int flagge2d = board.Cells.Count(c => c.Status == CellStatus.Flagged && c.ItIsAMine == true);
                 int flagged = board.Cells.Where(c => c.Status == CellStatus.Flagged && c.ItIsAMine == true).Count();
                 int flaggedIncorrectly = board.Cells.Where(c => c.Status == CellStatus.Flagged && c.ItIsAMine == false).Count();
 

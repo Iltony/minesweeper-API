@@ -2,7 +2,7 @@
 {
     public enum GameStatus : short
     {
-        Active,
+        Active = 0,
         GameOver,
         Resolved
     }
