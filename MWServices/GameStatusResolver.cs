@@ -10,12 +10,9 @@ namespace MWServices
         {
             if (board.GameStatus == GameStatus.Active)
             {
-
-                int flagge2d = board.Cells.Count(c => c.Status == CellStatus.Flagged && c.ItIsAMine == true);
-                int flagged = board.Cells.Where(c => c.Status == CellStatus.Flagged && c.ItIsAMine == true).Count();
-                int flaggedIncorrectly = board.Cells.Where(c => c.Status == CellStatus.Flagged && c.ItIsAMine == false).Count();
-
-                int mines = board.Cells.Where(c => c.ItIsAMine).Count();
+                int flagged = board.Cells.Count(c => c.Status == CellStatus.Flagged && c.ItIsAMine == true);
+                int flaggedIncorrectly = board.Cells.Count(c => c.Status == CellStatus.Flagged && c.ItIsAMine == false);
+                int mines = board.Cells.Count(c => c.ItIsAMine);
 
                 // Won game if all the flags are set
                 if (flaggedIncorrectly == 0 && flagged == mines) {

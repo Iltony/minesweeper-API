@@ -67,6 +67,11 @@ namespace MWServices
             return result;
         }
 
+        public async Task<User> GetUserAsync(string username)
+        {
+            return await _userRepository.GetUserAsync(username);
+        }
+
         internal static User BuildUser(string username, string firstName, string lastName, DateTime birthdate)
         {
             return new User

@@ -12,7 +12,6 @@ namespace MWEntities
         public int Rows { get; set; }
         public long Milliseconds { get; set; }
         public IList<Cell> Cells { get; set; }
-        public IList<Cell> Mines { get; set; }
         public GameStatus GameStatus { get; set; }
 
     }

@@ -23,14 +23,14 @@ namespace minesweeper_API.Controllers
 
         [HttpPut]
         [Route("register")]
-        public async Task<IApiResponse> RegisterAsync(string username, string firstName, string lastName, DateTime birthdate)
+        public async Task<IApiResponse> RegisterAsync([FromBody] RegisterRequest registerRequest)
         {
             //var cult = Thread.CurrentThread.CurrentUICulture;
             var message = _serviceResourceManager.ResourceManager.GetString("UserRegistered");
 
             try
             {
-                var data = await _userService.RegisterUserAsync(username, firstName, lastName, birthdate);
+                var data = await _userService.RegisterUserAsync(registerRequest.Username, registerRequest.FirstName, registerRequest.LastName, registerRequest.Birthdate);
 
                 return new SuccessResponse<User>
                 {
@@ -53,8 +53,8 @@ namespace minesweeper_API.Controllers
         }
 
         [HttpGet]
-        [Route("getBoards")]
-        public async Task<IApiResponse> GetUserBoardsAsync(string username)
+        [Route("getBoards/{username}")]
+        public async Task<IApiResponse> GetUserBoardsAsync([FromRoute] string username)
         {
             try
             {
@@ -74,5 +74,24 @@ namespace minesweeper_API.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("getUser/{username}")]
+        public async Task<IApiResponse> GetUserAsync([FromRoute]string username)
+        {
+            try
+            {
+                var data = await _userService.GetUserAsync(username);
+
+                return new SuccessResponse<User>
+                {
+                    Data = data,
+                };
+
+            }
+            catch (Exception ex)
+            {
+                return new ErrorResponse { Message = _serviceResourceManager.ResourceManager.GetString("DefaultErrorMessage") };
+            }
+        }
     }
 }

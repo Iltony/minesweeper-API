@@ -209,7 +209,7 @@ namespace TestProject
         }
 
         [Test]
-        public async Task GetUserBoardsAsync_WhenUserExists_DoesNotRaiseException()
+        public async Task GetUserBoardsAsync_WhenUserDoesNotExists_RaiseException()
         {
             var username = _fixture.Create<string>();
             
@@ -243,6 +243,38 @@ namespace TestProject
 
             Assert.AreEqual(boards.Count, result.Count);
          
+        }
+
+
+        [Test]
+        public async Task GetUserAsync_WhenUserIsInvalid_MustReturnNull()
+        {
+            //The username must be greater than 1 character
+            var username = string.Empty;
+            A.CallTo(() => _repository.GetUserAsync(A<string>._)).Returns((User)null);
+            _service = new UserService(_repository, _servicesResourceManager, _mapper);
+
+            var result = await _service.GetUserAsync(username);
+
+            Assert.IsNull(result);
+        }
+
+
+        [Test]
+        public async Task GetUserAsync_WhenHaveValue_ReturnsTheValue()
+        {
+            var username = _fixture.Create<string>();
+
+            var user = _fixture.Create<User>();
+
+            A.CallTo(() => _repository.GetUserAsync(A<string>._)).Returns(user);
+            _service = new UserService(_repository, _servicesResourceManager, _mapper);
+
+            var result = await _service.GetUserAsync(username);
+
+            Assert.AreEqual(user, result);
+
+
         }
     }
 }

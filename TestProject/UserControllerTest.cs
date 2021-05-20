@@ -56,12 +56,20 @@ namespace TestProject
             var lastName = _fixture.Create<string>();
             var birthdate = DateTime.Now.AddYears(-12);
 
+            var request = new RegisterRequest
+            {
+                Username = username,
+                FirstName = firstName,
+                LastName = lastName,
+                Birthdate = birthdate
+            };
+
             var user = UserService.BuildUser(username, firstName, lastName, birthdate);
 
             A.CallTo(() => _service.RegisterUserAsync(username, firstName, lastName, birthdate))
                     .Throws(new DuplicatedUsernameException(_resourceManager));
 
-            var result = await _userController.RegisterAsync(username, firstName, lastName, birthdate) as ErrorResponse;
+            var result = await _userController.RegisterAsync(request) as ErrorResponse;
 
             Assert.AreEqual("error", result.Status);
             Assert.AreEqual(MSG_DUPLICATEDUSERNAME, result.Message);
@@ -75,12 +83,20 @@ namespace TestProject
             var lastName = _fixture.Create<string>();
             var birthdate = DateTime.Now.AddYears(-9);
 
+            var request = new RegisterRequest
+            {
+                Username = username,
+                FirstName = firstName,
+                LastName = lastName,
+                Birthdate = birthdate
+            };
+
             var user = UserService.BuildUser(username, firstName, lastName, birthdate);
 
             A.CallTo(() => _service.RegisterUserAsync(username, firstName, lastName, birthdate))
                     .Throws(new InvalidBirthDateException(_resourceManager));
 
-            var result = await _userController.RegisterAsync(username, firstName, lastName, birthdate) as ErrorResponse;
+            var result = await _userController.RegisterAsync(request) as ErrorResponse;
 
             Assert.AreEqual("error", result.Status);
             Assert.AreEqual(MSG_INVALIDBIRTHDATE, result.Message);
@@ -94,12 +110,20 @@ namespace TestProject
             var lastName = _fixture.Create<string>();
             var birthdate = DateTime.Now.AddYears(-12);
 
+            var request = new RegisterRequest
+            {
+                Username = username,
+                FirstName = firstName,
+                LastName = lastName,
+                Birthdate = birthdate
+            };
+
             var user = UserService.BuildUser(username, firstName, lastName, birthdate);
 
             A.CallTo(() => _service.RegisterUserAsync(username, firstName, lastName, birthdate))
                     .Throws(new InvalidUsernameException(_resourceManager));
 
-            var result = await _userController.RegisterAsync(username, firstName, lastName, birthdate) as ErrorResponse;
+            var result = await _userController.RegisterAsync(request) as ErrorResponse;
 
             Assert.AreEqual("error", result.Status);
             Assert.AreEqual(MSG_INVALIDUSERNAME, result.Message);
@@ -113,12 +137,21 @@ namespace TestProject
             var lastName = _fixture.Create<string>();
             var birthdate = DateTime.Now.AddYears(-12);
 
+            var request = new RegisterRequest
+            {
+                Username = username,
+                FirstName = firstName,
+                LastName = lastName,
+                Birthdate = birthdate
+            };
+
+
             var user = UserService.BuildUser(username, firstName, lastName, birthdate);
 
             A.CallTo(() => _service.RegisterUserAsync(username, firstName, lastName, birthdate))
                     .Throws<Exception>();
 
-            var result = await _userController.RegisterAsync(username, firstName, lastName, birthdate) as ErrorResponse;
+            var result = await _userController.RegisterAsync(request) as ErrorResponse;
 
             Assert.AreEqual("error", result.Status);
             Assert.AreEqual(MSG_DEFAULTERRORMESSAGE, result.Message);
@@ -132,11 +165,19 @@ namespace TestProject
             var lastName = _fixture.Create<string>();
             var birthdate = DateTime.Now.AddYears(-12);
 
+            var request = new RegisterRequest
+            {
+                Username = username,
+                FirstName = firstName,
+                LastName = lastName,
+                Birthdate = birthdate
+            };
+
             var user = UserService.BuildUser(username, firstName, lastName, birthdate);
 
             A.CallTo(() => _service.RegisterUserAsync(username, firstName, lastName, birthdate)).Returns(user);
 
-            var result = await _userController.RegisterAsync(username, firstName, lastName, birthdate) as SuccessResponse<User>;
+            var result = await _userController.RegisterAsync(request) as SuccessResponse<User>;
 
             Assert.AreEqual("success", result.Status);
             Assert.AreEqual(MSG_USERREGISTERED, result.Message);
@@ -190,6 +231,57 @@ namespace TestProject
 
             Assert.AreEqual("error", result.Status);
             Assert.AreEqual(MSG_INVALIDUSERNAME, result.Message);
+        }
+
+
+
+
+
+
+        [Test]
+        public async Task GetUserAsync_WhenUserExists_MustReturnSuccess()
+        {
+            var username = _fixture.Create<string>();
+            var user = _fixture.Create<User>();
+
+            A.CallTo(() => _service.GetUserAsync(username)).Returns(user);
+
+            SuccessResponse<User> result = (SuccessResponse<User>)await _userController.GetUserAsync(username);
+
+            Assert.AreEqual("success", result.Status);
+            Assert.IsNull(result.Message);
+            Assert.AreEqual(user, result.Data);
+        }
+
+
+        [Test]
+        public async Task GetUserAsync_WhenUserDoesNotExists_MustReturnSuccess()
+        {
+            var username = _fixture.Create<string>();
+            
+            A.CallTo(() => _service.GetUserAsync(username)).Returns((User)null);
+
+            SuccessResponse<User> result = (SuccessResponse<User>)await _userController.GetUserAsync(username);
+
+            Assert.AreEqual("success", result.Status);
+            Assert.IsNull(result.Data);
+            Assert.IsNull(result.Message);
+        }
+
+
+        [Test]
+        public async Task GetUserAsync_WhenErrorOcurrs_MustReturnDefaultError()
+        {
+            var username = _fixture.Create<string>();
+            var errorMessge = _fixture.Create<string>();
+
+            A.CallTo(() => _service.GetUserAsync(username))
+                .Throws(new Exception(errorMessge));
+
+            var result = await _userController.GetUserAsync(username) as ErrorResponse;
+
+            Assert.AreEqual("error", result.Status);
+            Assert.AreEqual(MSG_DEFAULTERRORMESSAGE, result.Message);
         }
     }
 }

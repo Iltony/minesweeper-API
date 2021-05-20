@@ -199,18 +199,54 @@ namespace TestProject
             }
         }
 
-        //[TearDown]
-        //public void TearDown() {
-        //    var options = new DbContextOptionsBuilder<MWContext>()
-        //        .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
-        //        .Options;
 
-        //    using (var context = new MWContext(options))
-        //    {
-        //        context.PersistibleBoards.RemoveRange(context.PersistibleBoards);
-        //        context.Users.RemoveRange(context.Users);
-        //        context.SaveChanges();
-        //    }
-        //}
+        [Test]
+        public async Task GetUserAsync_MustReturnTheUser()
+        {
+            var options = new DbContextOptionsBuilder<MWContext>()
+                .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
+                .Options;
+
+            using (var context = new MWContext(options))
+            {
+                var repo = new UserRepository(context);
+
+                const string user1 = "user1";
+                var u1 = _fixture.Build<User>()
+                                .With(b => b.Username, user1).Create();
+
+                context.Users.Add(u1);
+                context.SaveChanges();
+
+                var result = await repo.GetUserAsync(user1);
+                Assert.AreEqual(u1, result);
+            }
+        }
+
+
+        [Test]
+        public async Task GetUserAsync_WhenTheUserDoesNotExist_MustReturnNull()
+        {
+            var options = new DbContextOptionsBuilder<MWContext>()
+                .UseInMemoryDatabase(databaseName: _fixture.Create<string>())
+                .Options;
+
+            using (var context = new MWContext(options))
+            {
+                var repo = new UserRepository(context);
+
+                const string user1 = "existingUser";
+                const string user2 = "nonExistingUser";
+                var u1 = _fixture.Build<User>()
+                                .With(b => b.Username, user1).Create();
+
+                context.Users.Add(u1);
+                context.SaveChanges();
+
+                var result = await repo.GetUserAsync(user2);
+
+                Assert.IsNull(result);
+            }
+        }
     }
 }

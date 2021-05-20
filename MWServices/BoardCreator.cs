@@ -22,7 +22,6 @@ namespace MWServices
                 Rows = rows,
                 GameStatus = GameStatus.Active,
                 Milliseconds = 0,
-                Mines = minesCells,
                 Cells = cells,
                 Id = Guid.NewGuid(),
                 Name = null,

@@ -31,5 +31,13 @@ namespace MWServices
         /// <param name="username">The username for lookup the user</param>
         /// <returns>It returns the list of boards for the user</returns>
         Task<IList<Board>> GetUserBoardsAsync(string username);
+
+
+        /// <summary>
+        /// Retrieve the corresponding user
+        /// </summary>
+        /// <param name="username">The username to be retrieved</param>
+        /// <returns>It returns the stored user o null</returns>
+        Task<User> GetUserAsync(string username);
     }
 }

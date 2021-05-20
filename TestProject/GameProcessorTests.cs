@@ -41,26 +41,6 @@ namespace TestProject
             Assert.AreEqual(expectedCells, result.Cells.Count());
         }
 
-
-        [TestCase(6, 8, 12)]
-        [TestCase(4, 8, 3)]
-        [TestCase(10, 5, 1)]
-        [TestCase(10, 8, 0)]
-        public void GenerateBoards_GeneratesTheCorrectNumberOfMines(int columns, int rows, int mines)
-        {
-            var user = _fixture.Create<User>();
-            var initialClickCell = _fixture.Build<Cell>()
-                                            .With(c => c.Column, 2)
-                                            .With(c => c.Row, 2)
-                                            .Create();
-
-
-            var result = _gameProcessor.GenerateBoard(initialClickCell, user, columns, rows, mines);
-
-
-            Assert.AreEqual(mines, result.Mines.Count());
-        }
-
         [TestCase(6, 8, 12)]
         [TestCase(4, 8, 3)]
         [TestCase(10, 5, 1)]
