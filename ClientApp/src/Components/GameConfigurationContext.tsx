@@ -3,8 +3,9 @@ import { GameConfigurationContextProps, GameConfigurationState } from '../Utils/
 
 //General settings of the game, just a sample
 
-const initialState : GameConfigurationState = {
+const initialState:GameConfigurationState = {
     allowAnomymusUser: true,
+    minimumAllowedAge: 10
 }
 
 export const GameConfigurationContext = createContext(initialState);

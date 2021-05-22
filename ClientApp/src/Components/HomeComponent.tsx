@@ -1,25 +1,26 @@
-import React, { ChangeEvent, EventHandler, FC, MouseEventHandler, useContext, useReducer, useState } from "react"
+import React, { ChangeEvent, useContext, useReducer, useState } from "react"
 import Switch from '@material-ui/core/Switch'
 import TextField from '@material-ui/core/TextField';
 
 import { GameConfigurationContext } from "./GameConfigurationContext"
 import { HomeProps } from "../Utils/Interfaces";
-import gameReducer, { gameInitialState, gameReducerConstants } from "../Utils/GameReducer";
+import gameReducer, { gameInitialState, gameReducerActions } from "../Utils/GameReducer";
 import { getUserAsync } from "../Utils/UserFunctions"
-import { Box, Button, FormControlLabel, FormGroup, Typography } from "@material-ui/core";
+import { Button, FormControlLabel } from "@material-ui/core";
+import useStyles from "../Utils/UseStyles";
 
 const HomeComponent:React.FC<HomeProps> = (props:HomeProps) => {
 
+   const classes = useStyles();
    
-   const useAnonymous = useContext(GameConfigurationContext).allowAnomymusUser;
-
    const [username, setUsername] = useState("");
-
    const [useUsername, toggleUsername] = useState(false);
+   const [errorMessage, setErrorMessage] = useState("");
 
 
    const [state, dispatch] = useReducer(gameReducer, gameInitialState);
    const allowAnomymusUser = useContext(GameConfigurationContext).allowAnomymusUser;
+
 
    const onToggleUsernameChange = () => {
       toggleUsername(!useUsername)
@@ -28,14 +29,21 @@ const HomeComponent:React.FC<HomeProps> = (props:HomeProps) => {
    const onUsernameClick = async () => {  
 
       let user =  await getUserAsync(username)
+
+      if (user){
+         dispatch({
+            type: gameReducerActions.SET_USER,
+            payload: user
+         });
+         window.location.replace("/play")
+      }
+      else {
+         setErrorMessage("No se encuentra el usuario")
+      }
+
+      console.log(user, 2, undefined);
       
-      window.location.replace("/play")
    }
-
-   const onRegisterClick = () => {
-      window.location.replace("/register")
-   }
-
 
    const onUsernameChange = (event: ChangeEvent<HTMLInputElement>) => {
  
@@ -44,76 +52,53 @@ const HomeComponent:React.FC<HomeProps> = (props:HomeProps) => {
       }
    }
 
+   const usernameError = () => errorMessage !== ""
+
    let showButtonUsername = false
    
-   if ( username && useUsername )
+   if ( username && useUsername ){
       showButtonUsername = true
+   }
 
    return (
+      <form className={classes.vertical} noValidate>
 
-         <>
-         <Typography className="welcome" variant="h4">{`Welcome`}</Typography>
-
-         <Box m="3rem" />
-         <FormGroup row>
-
-           
-            <FormControlLabel
-               control={
-                  <Switch
-                  checked={useUsername}
-                  onChange={onToggleUsernameChange}
-                  name="swcUseUsername"
-                  inputProps={{ 'aria-label': 'secondary checkbox' }}
-                  />
-               }
-               label="Load my saved games "
+         <FormControlLabel
+            control={
+               <Switch
+               checked={useUsername}
+               onChange={onToggleUsernameChange}
+               name="swcUseUsername"
+               inputProps={{ 'aria-label': 'secondary checkbox' }}
                />
-            
-      
+            }
+            label="Load my saved games "
+            />
+         
 
-            <Box m="2rem" />
-         </FormGroup>
-
-
-         <FormGroup row >
-
-           
             {useUsername &&
-               <TextField id="txtusername" variant="outlined" type="text" label="username" value={username} onChange={onUsernameChange}/>
+               <TextField id="txtusername" variant="outlined" type="text" label="username" 
+                     className={classes.textField}
+                     error={usernameError()} 
+                     helperText={`${errorMessage}`}
+                     value={username} onChange={onUsernameChange}/>
             }              
 
-            <Box m="2rem" />
-         </FormGroup>
-
-
-         <FormGroup row>
-                  
             {useUsername &&
-               <>
-                  <Button variant="outlined" color="primary" id="btnLoadUserBoards" onClick={onUsernameClick}> Load Boards</Button>
-               </>
+                 <Button className={classes.button} variant="outlined" color="primary" id="btnLoadUserBoards" onClick={onUsernameClick}> Load Boards</Button>
             }
             
-            <Box m="2rem" />
             {useUsername &&
-                  <Button  variant="outlined" color="primary"  id="btnStartNewGame" onClick={() => window.location.replace("/newgame") }> New Game </Button>
+                  <Button className={classes.button} variant="contained" color="primary"  id="btnStartNewGame" onClick={() => window.location.replace("/newgame") }> New Game </Button>
             }
 
-         
-            <Box m="2rem" />
-         </FormGroup>
-
-
-         <FormGroup row>
-
-
-         {!username && !useUsername && useAnonymous &&
-            <Button variant="outlined" color="primary"  id="btnStartAnonymous" onClick={() => {window.location.replace("/newgame")}}> New Game A </Button>
+         {!username && !useUsername && allowAnomymusUser &&
+            <Button className={classes.button} variant="contained" color="primary"  id="btnStartAnonymous" onClick={() => {window.location.replace("/newgame")}}> New Game </Button>
          }
-         </FormGroup>
-         </>
 
+         <Button className={classes.button} variant="outlined" color="secondary"  id="btnRegister" onClick={() => {window.location.replace("/register")}}> User Registration </Button>
+
+      </form>
    );
 }
 

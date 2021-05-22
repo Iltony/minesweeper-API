@@ -3,10 +3,10 @@ import {ReactNode } from "react";
 
 export interface User {
     username: string,
-    firstName: string,
-    lastName: string,
-    birthdate: Date,
-    millisecondsRecord: 0
+    firstName?: string,
+    lastName?: string,
+    birthdate?: Date,
+    millisecondsRecord?: Number
 }
 
 export interface Cell {
@@ -42,10 +42,14 @@ export interface GameConfigurationContextProps {
 export interface GameReducerState {
     user?: User,
     activeBoard?: Board
+    columns: Number,
+    rows: Number,
+    mines:Number
 }
 
 export interface GameConfigurationState {
     allowAnomymusUser: Boolean,
+    minimumAllowedAge: Number
 }
 
 // Fetch -------------------------------------------------------------------
@@ -55,11 +59,28 @@ export interface ApiCallResponse {
 }
 
 export interface SuccessApiCall<T> extends ApiCallResponse {
-    data: T ,
+    data: T
 }
 
-export interface ErrorApiCall<T> extends ApiCallResponse {
+export interface ErrorApiCall extends ApiCallResponse {
 }
+
+export interface IRequestResult<T> {
+    data: T | null,
+    error: string | null
+}
+
+
+export class RequestResult<T> implements IRequestResult<T> {
+    data: T | null;
+    error: string | null;
+    
+     constructor(data:T | null, error: string | null) {
+        this.data= data
+        this.error= error
+    }
+}
+
 
 // Components --------------------------------------------------------------
 export interface ErrorProps {}
