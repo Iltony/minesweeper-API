@@ -3,7 +3,11 @@ import APP_CONSTANTS from "./ApplicationConstants";
 import { fetchData } from "./FetchData";
 import { postData } from "./PostData";
 
+export const getDefaultBirthDate = (minimumAllowedAge:Number) => {
+    const today = new Date();
 
+    return new Date(today.getFullYear() - minimumAllowedAge.valueOf(), today.getMonth(), today.getDay());
+}
 
 export const getUserAsync = 
     async (username: string) =>  {

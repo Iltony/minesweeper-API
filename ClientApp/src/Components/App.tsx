@@ -4,6 +4,7 @@ import logo from '../Assets/logo.png';
 import { BrowserRouter } from 'react-router-dom';
 import { GameConfigurationProvider } from './GameConfigurationContext'
 import routes from '../Utils/Routes'
+
 function App() {
 	return (
 
@@ -17,11 +18,8 @@ function App() {
 				</GameConfigurationProvider>
 
 			</header>
-
 		</div>
-
 	);
-
 }
 
 export default App;

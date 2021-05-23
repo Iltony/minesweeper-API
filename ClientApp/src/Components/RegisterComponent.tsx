@@ -1,4 +1,5 @@
 import { Button, TextField, Typography } from "@material-ui/core";
+import { format } from "date-fns";
 import { ChangeEvent, FC, useReducer, useState, useContext } from "react"
 import gameReducer, { gameInitialState, gameReducerActions } from "../Utils/GameReducer";
 import { RegisterProps, User } from "../Utils/Interfaces";
@@ -9,22 +10,21 @@ import { GameConfigurationContext } from "./GameConfigurationContext";
 
 const RegisterComponent:FC<RegisterProps> = (props: RegisterProps) =>
 {
+   const gameDefaults = useContext(GameConfigurationContext); 
+
    const initialUserData:User = {
       username: '',
-      birthdate: new Date ()
+      birthdate: gameDefaults.maxAllowedBirthDate
    };
 
    const classes = useStyles();
-
    const [userData, setUserData] = useState<User>(initialUserData)
    const [state, dispatch] = useReducer(gameReducer, gameInitialState);
-   const minimumAllowedAge = useContext(GameConfigurationContext).minimumAllowedAge; 
-
-
    const [message, setMessage] = useState("");
    const [hasError, setHasError] = useState(false);
    const [showNewGame, toggleNewGame] = useState(false);
    
+
    const onRegisterClick = async () => {  
      
       if (!userData.username){
@@ -36,7 +36,7 @@ const RegisterComponent:FC<RegisterProps> = (props: RegisterProps) =>
       setMessage("");
       setHasError(false)
       
-      let userRegistratioResult =  await registerUserAsync(userData, minimumAllowedAge)
+      let userRegistratioResult =  await registerUserAsync(userData, gameDefaults.minimumAllowedAge)
 
       if (userRegistratioResult?.error){
          setMessage(userRegistratioResult?.error)
@@ -69,7 +69,7 @@ const RegisterComponent:FC<RegisterProps> = (props: RegisterProps) =>
       setUserData({...userData, lastName: event.target.value})
    }
    
-   const onBirthDateChange = (event: ChangeEvent<HTMLInputElement>) =>{
+   const onBirthdateChange = (event: ChangeEvent<HTMLInputElement>) =>{
       setUserData({...userData, birthdate: new Date(event.target.value)})
    }
 
@@ -84,18 +84,18 @@ const RegisterComponent:FC<RegisterProps> = (props: RegisterProps) =>
                <TextField
                   id="dtpBirthdate"
                   label="Birthdate"
+                  variant="outlined"
                   type="date"
-                  defaultValue={new Date()}
-                  value={userData.birthdate} 
+
+                  defaultValue={format(userData.birthdate as Date, "yyyy-MM-dd")}
                   className={classes.textField}
-                  onChange={onBirthDateChange}
-                  InputLabelProps={{
-                     shrink: true,
-                  }}
+                  onChange={onBirthdateChange}
+                  InputLabelProps={{ shrink: true }}
                />
 
+
                {!showNewGame && 
-                  <Button className={classes.button} variant="outlined" color="primary"  id="btnRegister" onClick={onRegisterClick}>Start</Button>
+                  <Button className={classes.button} variant="contained" color="primary"  id="btnRegister" onClick={onRegisterClick}>Register</Button>
                }
 
                {message &&
@@ -103,7 +103,7 @@ const RegisterComponent:FC<RegisterProps> = (props: RegisterProps) =>
                }
 
                {showNewGame &&
-                    <Button className={classes.button} variant="outlined" color="primary"  id="btnNewGame" onClick={() => window.location.replace("/newGame")}>Start</Button>
+                    <Button className={classes.button} variant="contained" color="primary"  id="btnNewGame" onClick={() => window.location.replace("/newGame")}>Start</Button>
                }
 
                <Button className={classes.button} variant="outlined" color="secondary"  id="btnGoHome" onClick={() => window.location.replace("/")}> Go home </Button>

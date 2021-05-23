@@ -49,7 +49,8 @@ export interface GameReducerState {
 
 export interface GameConfigurationState {
     allowAnomymusUser: Boolean,
-    minimumAllowedAge: Number
+    minimumAllowedAge: Number,
+    maxAllowedBirthDate: Date
 }
 
 // Fetch -------------------------------------------------------------------
