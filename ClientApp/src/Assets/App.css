@@ -3,7 +3,7 @@
 }
 
 .App-logo {
-  height: 40vmin;
+  height: 20vmin;
   pointer-events: none;
 }
 
@@ -42,3 +42,60 @@
     transform: rotate(360deg);
   }
 }
+
+
+
+.board {
+  max-height: 90vh;
+  max-width: 90wh;
+  border: solid 2px blue;
+}
+
+.row{
+  display: flex;
+  flex-direction:row;
+  flex-wrap: nowrap;
+  justify-content: space-evenly;
+  background-color: transparent;
+}
+
+
+.cell {
+  height: 40px;
+  width: 40px;
+  background-color: gradient;
+  /* min-height: 1vmin;
+  min-width: 1vmin;
+  max-height: 3vmin;
+  max-width: 3vmin;*/
+  margin: 2px;
+  border: solid 2px blueviolet;
+  background-color: darkorange;
+}
+
+  .cell .cell-saved{
+    background-color: darkorange;
+  }
+
+  .cell .cell-suspicious {
+    background-color: purple;
+  }
+
+  .cell .cell-flagged {
+    background-color: purple;
+  }
+
+  .cell .cell-revealed {
+    background-color: yellow;
+    color: blueviolet;
+  }
+
+  .cell .cell-revealed .cell-font {
+    font-weight: 200;
+    font-size: 1rem;
+    color: blueviolet;
+  }
+
+  .cell .cell-burned {
+    color: darkorange;
+  }

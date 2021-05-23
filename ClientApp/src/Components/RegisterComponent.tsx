@@ -99,7 +99,7 @@ const RegisterComponent:FC<RegisterProps> = (props: RegisterProps) =>
                }
 
                {message &&
-                  <Typography className={hasError ? 'error' : 'welcome'} variant="h4">{message}</Typography>
+                  <Typography className={hasError ? 'error' : 'welcome'} variant="h6">{message}</Typography>
                }
 
                {showNewGame &&

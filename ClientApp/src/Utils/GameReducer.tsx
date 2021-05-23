@@ -27,7 +27,7 @@ const gameReducer = (state: {}, action: any) => {
 	switch (action.type) {
 
 		case gameReducerActions.SET_ANONYMOUS:
-			return { ...state, user: undefined, activeBoard: undefined }
+			return { ...state, user: undefined, activeBoard: undefined } as GameReducerState;
 
 		case gameReducerActions.SET_USER:
 
@@ -38,26 +38,26 @@ const gameReducer = (state: {}, action: any) => {
 					...state, 
 					user: { ...action.payload },
 					activeBoard: { ...(state as GameReducerState).activeBoard, owner: { ...action.payload } }
-				} 
+				} as GameReducerState;
 			};
 
-			return { ...state, user: action.payload }
+			return { ...state, user: action.payload } as GameReducerState;
 
 		case gameReducerActions.SET_BOARD:
 
-			return { ...state, activeBoard: action.payload }
+			return { ...state, activeBoard: action.payload } as GameReducerState;
 
 		case gameReducerActions.SET_COLUMNS:
-			return { ...state, columns: action.payload };
+			return { ...state, columns: action.payload } as GameReducerState;
 
 		case gameReducerActions.SET_ROWS:
-			return { ...state, rows: action.payload };
+			return { ...state, rows: action.payload } as GameReducerState;
 				
 		case gameReducerActions.SET_MINES:
-			return { ...state, mines: action.payload };
+			return { ...state, mines: action.payload } as GameReducerState;
 
 		default:
-			return state
+			return state as GameReducerState;
    
 	}
 }

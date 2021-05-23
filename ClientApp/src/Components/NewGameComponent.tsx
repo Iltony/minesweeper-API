@@ -7,10 +7,13 @@ import useStyles from "../Utils/UseStyles";
 const NewGameComponent:FC<NewGameProps> = (props: NewGameProps) =>
 {
    const classes = useStyles();
+   
    const [state, dispatch] = useReducer(gameReducer, gameInitialState);
    const [message, setMessage] = useState("");
    const [hasError, setHasError] = useState(false);
-   
+   const stateGame:GameReducerState = state as GameReducerState;
+
+
    const onColumnsChange = (event: ChangeEvent<HTMLInputElement>) =>{
       dispatch({
          type: gameReducerActions.SET_COLUMNS,
@@ -31,28 +34,25 @@ const NewGameComponent:FC<NewGameProps> = (props: NewGameProps) =>
          payload: event.target.value
       });
    }
-   
-
-   const stateValue:GameReducerState = state as GameReducerState;
-
+  
    return (
       <form className={classes.vertical}  noValidate>
-               <Typography className="welcome" variant="h4">{`New Game`}</Typography>
+         <Typography className="welcome" variant="h4">{`New Game`}</Typography>
 
-               <TextField className={classes.textField} id="txtColumns" variant="outlined" type="text" label="Columns" value={stateValue.columns} onChange={onColumnsChange}/>
-               <TextField className={classes.textField} id="txtRows" variant="outlined" type="text" label="Rows" value={stateValue.rows} onChange={onRowsChange}/>
-               <TextField className={classes.textField} id="txtMines" variant="outlined" type="text" label="Mines" value={stateValue.mines} onChange={onMinesChange}/>
+         <TextField className={classes.textField} id="txtColumns" variant="outlined" type="text" label="Columns" value={stateGame.columns} onChange={onColumnsChange}/>
+         <TextField className={classes.textField} id="txtRows" variant="outlined" type="text" label="Rows" value={stateGame.rows} onChange={onRowsChange}/>
+         <TextField className={classes.textField} id="txtMines" variant="outlined" type="text" label="Mines" value={stateGame.mines} onChange={onMinesChange}/>
 
-               {!hasError && 
-                  <Button className={classes.button} variant="outlined" color="primary"  id="btnStart" onClick={() => window.location.replace("/play")}>Start</Button>
-               }
+         {!hasError && 
+            <Button className={classes.button} variant="outlined" color="primary"  id="btnStart" onClick={() => window.location.replace("/play")}>Start</Button>
+         }
 
-               {message &&
-                  <Typography className={hasError ? 'error' : 'welcome'} variant="h4">{message}</Typography>
-               }
+         {message &&
+            <Typography className={hasError ? 'error' : 'welcome'} variant="h4">{message}</Typography>
+         }
 
-               <Button className={classes.button} variant="outlined" color="secondary"  id="btnGoHome" onClick={() => window.location.replace("/")}> Go home </Button>
-          </form>
+         <Button className={classes.button} variant="outlined" color="secondary"  id="btnGoHome" onClick={() => window.location.replace("/")}> Go home </Button>
+      </form>
    );
 
 

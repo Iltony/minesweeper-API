@@ -3,14 +3,21 @@ import logo from '../Assets/logo.png';
 
 import { BrowserRouter } from 'react-router-dom';
 import { GameConfigurationProvider } from './GameConfigurationContext'
-import routes from '../Utils/Routes'
+import routes from '../Utils/Routes';
 
 function App() {
+
+	const isHome = window.location.pathname == '/';
+
 	return (
 
 		<div className="App">
 			<header className="App-header">
-				<img src={logo} className="App-logo" alt="logo" />
+
+				{isHome &&
+					<img src={logo} className="App-logo" alt="logo" />
+				}
+
 				<GameConfigurationProvider>
 
 					<BrowserRouter children={routes} basename={"/"} />

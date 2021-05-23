@@ -13,15 +13,16 @@ code {
 }
 
 
-h4.error {
+h4.error, h6.error{
   color: red
 }
 
 
-h4.welcome {
+h4.welcome, h6.welcome{
   color: blue
 }
 
 h5.instructions {
   color: darkgrey 
 }
+

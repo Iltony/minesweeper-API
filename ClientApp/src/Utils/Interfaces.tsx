@@ -53,6 +53,22 @@ export interface GameConfigurationState {
     maxAllowedBirthDate: Date
 }
 
+export interface CellAction {
+    board: Board,
+    cell: CellCoordinates
+}
+
+
+export interface InitializeAction {
+    username: string | null,
+    columns: Number,
+    rows: Number,
+    mines: Number,
+    initialClickCell: CellCoordinates
+}
+
+
+
 // Fetch -------------------------------------------------------------------
 export interface ApiCallResponse {
     status: string,
@@ -96,26 +112,24 @@ export interface SavedRowProps {
     onSelectBoard: ()=>{}
 }
 
-export interface CellProps {
-    Cell: Cell
-}
-
-export interface CellProps {
-    Cell: Cell
-}
-
 export interface NewGameProps {}
 export interface GameProps {}
+export interface BoardProps {
+    setHasError: (value:boolean) => void    
+    setMessage: (message:string) => void
+}
 export interface RegisterProps {}
 
-
 export interface RowProps {
-    onCellMainClick: ()=>{}
-    onCellAlternativeClick: ()=>{}
-    Cells: Cell[]
+    onCellMainClick: (clickedCell:Cell)=>{}
+    onCellAlternativeClick: (clickedCell:Cell)=>{}
+    cells: Cell[]
+    row: number
+    gameStatus: number
 }
 export interface CellProps {
-    onCellMainClick: ()=>{}
-    onCellAlternativeClick: ()=>{}
-    Cell: Cell
+    onCellMainClick: (clickedCell:Cell)=>{}
+    onCellAlternativeClick: (clickedCell:Cell )=>{}
+    cell: Cell
+    gameStatus: number
 }
