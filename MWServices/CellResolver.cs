@@ -1,4 +1,5 @@
 ﻿using MWEntities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,36 +7,53 @@ namespace MWServices
 {
     public class CellResolver : ICellResolver
     {
-        public void ResolveCell(IList<Cell> boardCells, Cell cell, int boardColums, int boardRows)
+        public void ResolveCell(IList<Cell> boardCells, Cell cell, int level, int boardColumns, int boardRows)
         {
             // Gets the list of closer cells coords
-            var closerCells = cell.GetCloserCells(boardColums, boardRows);
+            var closerCells = cell.GetCloserCells(boardColumns, boardRows);
 
-            //now gets from the cells the list of cells that matches
-            var realCloserCells = boardCells.Join<Cell, Cell, CellKeySelector, Cell> (
-                closerCells,
-                boardCell => new CellKeySelector { Column = boardCell.Column, Row = boardCell.Row }, 
-                closerCell => new CellKeySelector { Column= closerCell.Column, Row = closerCell.Row },
-                (boardCell, closerCell) => boardCell, 
-                new CellEqualityComparer()
-            );
+            // Set status to evaluation
+            cell.Status = CellStatus.Evaluation;
 
-            int minesCounter = 0;
+            IEnumerable<Cell> realCloserCells = GetCloserCellsFromBoard(boardCells, closerCells);
 
-            foreach (Cell rcc in realCloserCells)
-            {
-                if (rcc.ItIsAMine)
+            // Get the mines of the cell
+            cell.CloserMinesNumber = realCloserCells.Count(c => c.ItIsAMine);
+
+            if (level <= Math.Floor((Math.Max((double)boardColumns, (double)boardRows) / 2))) {
+                foreach (Cell rcc in realCloserCells.Where(c => !c.ItIsAMine))
                 {
-                    minesCounter++;
-                }
-                else if (rcc.Status == CellStatus.Clear)
-                {
-                    ResolveCell(boardCells, rcc, boardColums, boardRows);
+                    System.Diagnostics.Debug.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(rcc));
+                    ResolveCell(boardCells, rcc, level + 1, boardColumns, boardRows);
                 }
             }
 
-            boardCells.First(c => c.Column == cell.Column && c.Row == cell.Row).Status = CellStatus.Revealed;
-            boardCells.First(c => c.Column == cell.Column && c.Row == cell.Row).CloserMinesNumber = minesCounter;
+            cell.Status = CellStatus.Revealed;
         }
+
+        private static void RemoveCallerFromCloserCell(IList<Cell> closerCellsOnlyCoords, Cell caller)
+        {
+            closerCellsOnlyCoords.Remove(closerCellsOnlyCoords.First(c => c.Column == caller.Column && c.Row == caller.Row));
+        }
+
+
+        private static IEnumerable<Cell> GetCloserCellsFromBoard(IList<Cell> boardCells, IList<Cell> closerCellsOnlyCoords)
+        {
+            //now gets from the cells the list of cells that matches the closer coords, not mines and
+            // the status is clear
+            IEnumerable<Cell> result =  closerCellsOnlyCoords.Join<Cell, Cell, CellKeySelector, Cell>(
+                boardCells.Where(cell => cell.Status == CellStatus.Clear || cell.ItIsAMine),
+                closerCell => new CellKeySelector(closerCell.Column, closerCell.Row),
+                boardCell => new CellKeySelector(boardCell.Column, boardCell.Row),
+                (closerCell, boardCell) => boardCell,
+                new CellEqualityComparer()
+            );
+
+            System.Diagnostics.Debug.WriteLine("closer: " + result.Count());
+
+            return result;
+        }
+
+
     }
 }

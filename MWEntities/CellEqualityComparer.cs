@@ -6,6 +6,11 @@ namespace MWEntities
 {
     public class CellKeySelector
     {
+        public CellKeySelector(int column, int row)
+        {
+            this.Column = column;
+            this.Row = row;
+        }
         public int Column { get; set; }
 
         public int Row{ get; set; }
@@ -20,8 +25,8 @@ namespace MWEntities
 
         public int GetHashCode([DisallowNull] CellKeySelector obj)
         {
-            if (obj == null) return 0;
-            return obj.GetHashCode();
+            // Invented some way to compare and avoid unwanted matches
+            return (obj.Column * Math.Sqrt(obj.Row) - obj.Column).GetHashCode();
         }
     }
 }

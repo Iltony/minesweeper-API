@@ -39,6 +39,11 @@ namespace minesweeper_API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "minesweeper_API", Version = "v1" });
             });
 
+            services.AddCors(c =>
+            {
+                c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
+            });
+
             // Auto Mapper Configurations
             var mapperConfig = new MapperConfiguration(mc =>
             {
@@ -46,9 +51,9 @@ namespace minesweeper_API
             });
 
             IMapper mapper = mapperConfig.CreateMapper();
-            services.AddSingleton(mapper);
 
-            
+            // DI
+            services.AddSingleton(mapper);
             services.AddScoped<IGameStatusResolver, GameStatusResolver>();
             services.AddScoped<IBoardCreator, BoardCreator>();
             services.AddScoped<ICellResolver, CellResolver>();

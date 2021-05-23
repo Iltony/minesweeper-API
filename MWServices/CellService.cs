@@ -120,7 +120,7 @@ namespace MWServices
                 else
                 {
                     //Resolve the cell and adjacents
-                    _cellResolver.ResolveCell(board.Cells, cell, board.Columns, board.Rows);
+                    _cellResolver.ResolveCell(board.Cells, cell, 0, board.Columns, board.Rows);
                 }
             }
                                 
