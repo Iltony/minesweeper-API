@@ -1,16 +1,18 @@
-import { FC, useReducer, useState } from "react"
-import gameReducer, { gameInitialState, gameReducerActions } from "../Utils/GameReducer";
+import { FC } from "react"
+import { gameReducerActions } from "../Utils/GameReducer";
 import { BoardProps, Cell, CellCoordinates } from "../Utils/Interfaces";
 import { CellStatus, GameStatus } from "../Utils/CellConstants";
 import { initializeAsync } from "../Utils/BoardFunctions";
 import RowComponent from "./RowComponent";
+import { useGameDispatch, useGameState } from "../Utils/GameContext";
 
 
 // this component render a dummy board before initialize
 const DummyBoardComponent:FC<BoardProps> = (props: BoardProps) =>
 {
 
-   const [state, dispatch] = useReducer(gameReducer, gameInitialState);
+   const state  = useGameState();
+   const dispatch = useGameDispatch();
    
    const onCellClick = async (clickedCell:Cell) => {
 
@@ -68,7 +70,7 @@ const DummyBoardComponent:FC<BoardProps> = (props: BoardProps) =>
 
    
    for (let i = 1; i <= state.rows; i++) {
-      let rowCells = allTheCells.filter(c => c.row == i)
+      let rowCells = allTheCells.filter(c => c.row === i)
 
       rows.push(rowCells)
    }  

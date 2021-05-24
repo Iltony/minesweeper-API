@@ -100,6 +100,9 @@ export class RequestResult<T> implements IRequestResult<T> {
 
 
 // Components --------------------------------------------------------------
+export interface GameProviderProps {
+    children: ReactNode
+}
 export interface ErrorProps {}
 export interface HomeProps {}
 
@@ -113,10 +116,15 @@ export interface SavedRowProps {
 }
 
 export interface NewGameProps {}
+
+
 export interface GameProps {}
+ 
+
 export interface BoardProps {
     setHasError: (value:boolean) => void    
     setMessage: (message:string) => void
+
 }
 export interface RegisterProps {}
 

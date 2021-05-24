@@ -1,13 +1,15 @@
-import React, { ChangeEvent, useContext, useReducer, useState } from "react"
+import React, { ChangeEvent, useContext, useState } from "react"
 import Switch from '@material-ui/core/Switch'
 import TextField from '@material-ui/core/TextField';
 
-import { GameConfigurationContext } from "./GameConfigurationContext"
+import { GameConfigurationContext } from "../Utils/GameConfigurationContext"
 import { HomeProps } from "../Utils/Interfaces";
-import gameReducer, { gameInitialState, gameReducerActions } from "../Utils/GameReducer";
+import { gameReducerActions } from "../Utils/GameReducer";
 import { getUserAsync } from "../Utils/UserFunctions"
 import { Button, FormControlLabel } from "@material-ui/core";
 import useStyles from "../Utils/UseStyles";
+import { useGameDispatch } from "../Utils/GameContext";
+import { useHistory } from "react-router-dom";
 
 const HomeComponent:React.FC<HomeProps> = (props:HomeProps) => {
 
@@ -17,11 +19,10 @@ const HomeComponent:React.FC<HomeProps> = (props:HomeProps) => {
    const [useUsername, toggleUsername] = useState(false);
    const [errorMessage, setErrorMessage] = useState("");
 
-
-   const [state, dispatch] = useReducer(gameReducer, gameInitialState);
    const allowAnomymusUser = useContext(GameConfigurationContext).allowAnomymusUser;
-
-
+   const dispatch = useGameDispatch();
+   const history = useHistory();
+   
    const onToggleUsernameChange = () => {
       toggleUsername(!useUsername)
    }
@@ -35,7 +36,8 @@ const HomeComponent:React.FC<HomeProps> = (props:HomeProps) => {
             type: gameReducerActions.SET_USER,
             payload: user
          });
-         window.location.replace("/play")
+         
+         history.push("/play")
       }
       else {
          setErrorMessage("No se encuentra el usuario")
@@ -53,12 +55,6 @@ const HomeComponent:React.FC<HomeProps> = (props:HomeProps) => {
    }
 
    const usernameError = () => errorMessage !== ""
-
-   let showButtonUsername = false
-   
-   if ( username && useUsername ){
-      showButtonUsername = true
-   }
 
    return (
       <form className={classes.vertical} noValidate>
@@ -89,14 +85,14 @@ const HomeComponent:React.FC<HomeProps> = (props:HomeProps) => {
             }
             
             {useUsername &&
-                  <Button className={classes.button} variant="contained" color="primary"  id="btnStartNewGame" onClick={() => window.location.replace("/newgame") }> New Game </Button>
+                  <Button className={classes.button} variant="contained" color="primary"  id="btnStartNewGame" onClick={() => history.push("/newgame") }> New Game </Button>
             }
 
          {!username && !useUsername && allowAnomymusUser &&
-            <Button className={classes.button} variant="contained" color="primary"  id="btnStartAnonymous" onClick={() => {window.location.replace("/newgame")}}> New Game </Button>
+            <Button className={classes.button} variant="contained" color="primary"  id="btnStartAnonymous" onClick={() => {history.push("/newgame")}}> New Game </Button>
          }
 
-         <Button className={classes.button} variant="outlined" color="secondary"  id="btnRegister" onClick={() => {window.location.replace("/register")}}> User Registration </Button>
+         <Button className={classes.button} variant="outlined" color="secondary"  id="btnRegister" onClick={() => {history.push("/register")}}> User Registration </Button>
 
       </form>
    );

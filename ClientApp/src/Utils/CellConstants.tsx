@@ -1,5 +1,3 @@
-
-
 export const GameStatus = {
     Active: 0,
     GameOver: 1,
@@ -13,4 +11,5 @@ export const CellStatus = {
     Revealed:3,
 };
 
-export default {GameStatus, CellStatus};
+const GameConstats = { GameStatus:GameStatus, CellStatus:CellStatus }
+export default GameConstats;

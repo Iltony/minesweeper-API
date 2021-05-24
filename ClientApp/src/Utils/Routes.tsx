@@ -6,6 +6,7 @@ import NewGameComponent from '../Components/NewGameComponent';
 import GameComponent from '../Components/GameComponent';
 import RegisterComponent from '../Components/RegisterComponent';
 import SavedBoardComponent from '../Components/SavedBoardComponent';
+import { GameReducerState } from './Interfaces';
 
 
 const Routes = (
@@ -17,7 +18,7 @@ const Routes = (
         <Route path="/newGame" component={NewGameComponent} />v
 
         <Route path="/play" component={GameComponent} />
-        
+
         <Route path="/register" component={RegisterComponent} />
 
         <Route path="/" component={HomeComponent} />

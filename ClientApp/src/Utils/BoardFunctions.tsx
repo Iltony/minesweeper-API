@@ -1,11 +1,11 @@
-import { Board, CellCoordinates, GameReducerState, InitializeAction, RequestResult, SuccessApiCall, User } from "./Interfaces";
+import { Board, CellCoordinates, GameReducerState, InitializeAction } from "./Interfaces";
 import APP_CONSTANTS from "./ApplicationConstants";
 import { postData } from "./PostData";
 
 export const initializeAsync = async (state:GameReducerState, clickedCell:CellCoordinates) =>  {
     const endpoint = APP_CONSTANTS.initialize_url
 
-    const userName = state.user != undefined ? state.user.username : null;
+    const userName = state.user !== undefined ? state.user.username : null;
 
     const requestData:InitializeAction  = {
         username: userName,

@@ -1,6 +1,5 @@
-import { Typography } from "@material-ui/core";
 import { FC } from "react"
-import { Cell, CellProps, RowProps } from "../Utils/Interfaces";
+import { Cell, RowProps } from "../Utils/Interfaces";
 
 import CellComponent from './CellComponent';
 import '../Assets/App.css';

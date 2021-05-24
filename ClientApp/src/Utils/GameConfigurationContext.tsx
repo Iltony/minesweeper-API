@@ -1,6 +1,6 @@
 import { createContext, useState } from 'react';
-import { GameConfigurationContextProps, GameConfigurationState } from '../Utils/Interfaces'
-import { getDefaultBirthDate } from '../Utils/UserFunctions';
+import { GameConfigurationContextProps, GameConfigurationState } from './Interfaces'
+import { getDefaultBirthDate } from './UserFunctions';
 
 //General settings of the game, just a sample
 const MIN_AGE_TO_REGISTER:Number = 10;

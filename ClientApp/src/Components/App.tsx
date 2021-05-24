@@ -2,12 +2,13 @@ import '../Assets/App.css';
 import logo from '../Assets/logo.png';
 
 import { BrowserRouter } from 'react-router-dom';
-import { GameConfigurationProvider } from './GameConfigurationContext'
+import { GameConfigurationProvider } from '../Utils/GameConfigurationContext'
 import routes from '../Utils/Routes';
+import { GameProvider } from '../Utils/GameContext';
 
 function App() {
 
-	const isHome = window.location.pathname == '/';
+	const isHome = window.location.pathname === '/';
 
 	return (
 
@@ -19,9 +20,9 @@ function App() {
 				}
 
 				<GameConfigurationProvider>
-
-					<BrowserRouter children={routes} basename={"/"} />
-
+					<GameProvider>
+						<BrowserRouter children={routes} basename={"/"} />
+					</GameProvider>
 				</GameConfigurationProvider>
 
 			</header>

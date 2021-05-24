@@ -1,4 +1,4 @@
-import { RequestResult, SuccessApiCall, User } from "./Interfaces";
+import { RequestResult, User } from "./Interfaces";
 import APP_CONSTANTS from "./ApplicationConstants";
 import { fetchData } from "./FetchData";
 import { postData } from "./PostData";

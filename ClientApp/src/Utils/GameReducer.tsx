@@ -16,9 +16,11 @@ export const gameReducerActions = {
 	SET_ANONYMOUS: 'SET_ANONYMOUS',
 	SET_USER: 'SET_USER',
 	SET_BOARD: 'SET_BOARD',
-	SET_COLUMNS: 'SET_COLUMNS',
-	SET_ROWS: 'SET_ROWS',
-	SET_MINES: 'SET_MINES'
+	SET_GAME_SETTINGS: 'SET_GAME_SETTINGS',
+
+	// SET_COLUMNS: 'SET_COLUMNS',
+	// SET_ROWS: 'SET_ROWS',
+	// SET_MINES: 'SET_MINES'
 };
 
 const gameReducer = (state: {}, action: any) => {
@@ -47,14 +49,21 @@ const gameReducer = (state: {}, action: any) => {
 
 			return { ...state, activeBoard: action.payload } as GameReducerState;
 
-		case gameReducerActions.SET_COLUMNS:
-			return { ...state, columns: action.payload } as GameReducerState;
+		// case gameReducerActions.SET_COLUMNS:
+		// 	return { ...state, columns: action.payload } as GameReducerState;
 
-		case gameReducerActions.SET_ROWS:
-			return { ...state, rows: action.payload } as GameReducerState;
+		// case gameReducerActions.SET_ROWS:
+		// 	return { ...state, rows: action.payload } as GameReducerState;
 				
-		case gameReducerActions.SET_MINES:
-			return { ...state, mines: action.payload } as GameReducerState;
+		// case gameReducerActions.SET_MINES:
+		// 	return { ...state, mines: action.payload } as GameReducerState;
+
+
+		case gameReducerActions.SET_GAME_SETTINGS:
+		 	return { ...state, ...action.payload } as GameReducerState;
+
+
+
 
 		default:
 			return state as GameReducerState;

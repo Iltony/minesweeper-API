@@ -1,11 +1,13 @@
 import { Button, TextField, Typography } from "@material-ui/core";
 import { format } from "date-fns";
-import { ChangeEvent, FC, useReducer, useState, useContext } from "react"
-import gameReducer, { gameInitialState, gameReducerActions } from "../Utils/GameReducer";
+import { ChangeEvent, FC, useState, useContext } from "react"
+import { gameReducerActions } from "../Utils/GameReducer";
 import { RegisterProps, User } from "../Utils/Interfaces";
 import { registerUserAsync } from "../Utils/UserFunctions";
 import useStyles from "../Utils/UseStyles";
-import { GameConfigurationContext } from "./GameConfigurationContext";
+import { GameConfigurationContext } from "../Utils/GameConfigurationContext";
+import { useGameDispatch } from "../Utils/GameContext";
+import { useHistory } from "react-router-dom";
 
 
 const RegisterComponent:FC<RegisterProps> = (props: RegisterProps) =>
@@ -17,9 +19,11 @@ const RegisterComponent:FC<RegisterProps> = (props: RegisterProps) =>
       birthdate: gameDefaults.maxAllowedBirthDate
    };
 
+   const dispatch = useGameDispatch();
+   const history = useHistory();
+
    const classes = useStyles();
    const [userData, setUserData] = useState<User>(initialUserData)
-   const [state, dispatch] = useReducer(gameReducer, gameInitialState);
    const [message, setMessage] = useState("");
    const [hasError, setHasError] = useState(false);
    const [showNewGame, toggleNewGame] = useState(false);
@@ -99,14 +103,14 @@ const RegisterComponent:FC<RegisterProps> = (props: RegisterProps) =>
                }
 
                {message &&
-                  <Typography className={hasError ? 'error' : 'welcome'} variant="h6">{message}</Typography>
+                  <Typography className={hasError ? 'error' : 'welcome'} variant="body2">{message}</Typography>
                }
 
                {showNewGame &&
-                    <Button className={classes.button} variant="contained" color="primary"  id="btnNewGame" onClick={() => window.location.replace("/newGame")}>Start</Button>
+                    <Button className={classes.button} variant="contained" color="primary"  id="btnNewGame" onClick={() => history.push("/newGame")}>Start</Button>
                }
 
-               <Button className={classes.button} variant="outlined" color="secondary"  id="btnGoHome" onClick={() => window.location.replace("/")}> Go home </Button>
+               <Button className={classes.button} variant="outlined" color="secondary"  id="btnGoHome" onClick={() => history.push("/")}> Go home </Button>
           </form>
       );
 }
