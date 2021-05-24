@@ -39,6 +39,7 @@ namespace minesweeper_API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "minesweeper_API", Version = "v1" });
             });
 
+
             services.AddCors(c =>
             {
                 c.AddPolicy("AllowOrigin", options => options.AllowAnyOrigin());
@@ -82,8 +83,11 @@ namespace minesweeper_API
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "minesweeper_API v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
+            //app.UseCors(
+            //    options => options.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader()
+            //);
             app.UseRouting();
 
             app.UseAuthentication();
